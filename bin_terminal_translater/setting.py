@@ -13,5 +13,8 @@ data_table = {
 parser_conf = {
     "language": {
         "action": "store"
+    },
+    "copy": {
+        "action": "store_true"
     }
 }
