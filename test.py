@@ -15,7 +15,18 @@ class Main_test(unittest.TestCase):
     def transelator(self, text, lang_code):
         """使用简单的方式直接实现翻译"""
         try:
-            dtb = setting.data_table.copy()
+            dtb = {
+                "url": "https://cn.bing.com/ttranslatev3?isVertical=1&&IG=ECCC2E222205418FB249C51DB6C943BF&IID=translator.5028.1",
+                "headers": {
+                    "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.132 Safari/537.36 Edg/80.0.361.66"
+                },
+                'data': {
+                    "fromLang": "auto-detect",
+                    "to": "zh-Hans",
+                    "text": None
+                }
+            }
+
             dtb["data"]["text"] = text
             dtb["data"]["to"] = lang_code
             res = requests.post(**dtb).json()
@@ -29,7 +40,7 @@ class Main_test(unittest.TestCase):
         lang_code = 'zh-Hans'
 
         # 使用核心内函数进行翻译请求
-        t1 = core.translator(setting, r_text, lang_code)
+        t1 = core.translator(r_text, lang_code)
 
         # 使用同样的参数配置手动请求
         t2 = self.transelator(r_text, lang_code)

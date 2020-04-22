@@ -5,28 +5,37 @@ import optparse
 import requests
 import json
 
-cp = configparser.ConfigParser()
+
+def __open_ini__(path) -> configparser.ConfigParser:
+    cp = configparser.ConfigParser()
+    cp.read(path)
+    return cp
 
 
 def parser_generator() -> optparse.OptionParser:
-    cp.read(setting.CONF_PARSER)
+    cp = __open_ini__(setting.CONF_PARSER)
     parser_conf = dict([[i, dict(cp.items(i))] for i in cp.sections()])
 
     parser = optparse.OptionParser()
     for option in parser_conf.keys():
         parser.add_option(
             *(F'-{option[0]}', F'--{option}'),
-            **setting.parser_conf[option]
+            **parser_conf[option]
         )
     return parser
 
 
-def translator(text, language_code) -> str:
-    cp.read(setting.CONF_PATH)
+def translator(text, language_code=None) -> str:
 
-    dtb = setting.data_table.copy()
-    dtb['data']['to'] = language_code
+    cp = __open_ini__(setting.CONF_PATH)
+
+    dtb = dict([[i, dict(cp.items(i))] for i in cp.sections()])
+
+    dtb['url'] = dtb.pop('server')['url']
     dtb['data']['text'] = text
+
+    if language_code:
+        dtb['data']['to'] = language_code
 
     try:
         response = requests.post(**dtb)

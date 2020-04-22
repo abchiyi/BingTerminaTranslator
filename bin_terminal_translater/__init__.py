@@ -9,7 +9,7 @@ def entrance(argv) -> str:
     # 没有提供文本时从剪贴板获取
     r_text = ' '.join(args) if ' '.join(args) else paste()
 
-    text = core.translator(setting, r_text, options.language.strip())
+    text = core.translator(r_text, options.language.strip())
 
     if options.copy:
         copy(text)
