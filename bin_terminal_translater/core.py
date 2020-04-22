@@ -3,7 +3,6 @@ from bin_terminal_translater import setting
 import configparser
 import optparse
 import requests
-import json
 
 
 def __open_ini__(path) -> configparser.ConfigParser:
