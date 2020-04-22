@@ -1,6 +1,7 @@
-import unittest
 from bin_terminal_translater import core, setting, entrance
+import unittest
 import requests
+import os
 
 
 class Main_test(unittest.TestCase):
@@ -43,10 +44,21 @@ class Main_test(unittest.TestCase):
         text = entrance(argv)
 
         # 手动实现
-        parser = core.parser_generator(setting)
+        parser = core.parser_generator()
         o, a = parser.parse_args(argv)
 
         self.assertEqual(text, self.transelator(' '.join(a), lang_code))
+
+    def test_base_dir_and_file(self):
+        self.assertTrue(os.path.exists(setting.BASE_DIR),
+                        F"Not Found FIle of Fir :{setting.BASE_DIR}")
+        self.assertTrue(os.path.exists(setting.CONF_PATH),
+                        F'Not Found File or Dir :{setting.CONF_PATH}')
+        self.assertTrue(os.path.exists(setting.CONF_PARSER),
+                        F'Not Found File or Dir :{setting.CONF_PARSER}')
+
+    # def test_Conf(self):
+    #     pass
 
 
 if __name__ == "__main__":

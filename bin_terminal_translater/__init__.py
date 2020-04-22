@@ -1,9 +1,9 @@
-from bin_terminal_translater import core, setting
+from bin_terminal_translater import core
 from pyperclip import paste, copy
 
 
 def entrance(argv) -> str:
-    parser = core.parser_generator(setting)
+    parser = core.parser_generator()
     options, args = parser.parse_args(argv)
 
     # 没有提供文本时从剪贴板获取
