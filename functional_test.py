@@ -12,8 +12,6 @@ class FunctionlTest(unittest.TestCase):
         pass
 
     def test_of_main(self):
-        # help
-        entrance(['-h'])
         # 翻译你好到英文
         argv = ['-l', 'en', '你好']
         print(entrance(argv))
@@ -28,7 +26,8 @@ class FunctionlTest(unittest.TestCase):
         argv = ['-l', 'zh-Hans']
         print(entrance(argv))
 
-        #
+        # 通过--languagehelp 来获取受支持的语言码表
+        print(entrance(['--languagehelp']))
 
 
 if __name__ == "__main__":

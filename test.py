@@ -2,6 +2,7 @@ from bin_terminal_translater import core, setting, entrance
 import unittest
 import requests
 import os
+import time
 
 
 class Main_test(unittest.TestCase):
