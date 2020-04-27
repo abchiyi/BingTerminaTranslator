@@ -26,8 +26,11 @@ class FunctionlTest(unittest.TestCase):
         argv = ['-l', 'zh-Hans']
         print(entrance(argv))
 
-        # 通过--languagehelp 来获取受支持的语言码表
-        print(entrance(['--languagehelp']))
+        # 使用者忘记添加语言参数,会话给出提示
+        print(entrance(["Hello"]))
+
+        # 通过--update 来获取受支持的语言码表
+        print(entrance(['--update']))
 
 
 if __name__ == "__main__":

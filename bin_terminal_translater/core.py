@@ -41,3 +41,13 @@ def translator(text, language_code=None) -> str:
         return response.json()[0]['translations'][0]['text']
     except KeyError as er:
         raise KeyError(F'KEY:{str(er)}\n{response.json()}')
+
+
+def options_check(func) -> str:
+    def run(options):
+
+        if not options.language:
+            print('language 参数为空，你需要通过-l 开关来指定它')
+        else:
+            func(options)
+    return run

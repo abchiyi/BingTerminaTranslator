@@ -1,5 +1,5 @@
-from bin_terminal_translater import core
 from pyperclip import paste, copy
+from bin_terminal_translater import core
 
 
 def entrance(argv) -> str:
@@ -11,6 +11,7 @@ def entrance(argv) -> str:
 
     text = core.translator(r_text, options.language.strip())
 
+    # 命令参数执行
     if options.copy:
         copy(text)
     return text

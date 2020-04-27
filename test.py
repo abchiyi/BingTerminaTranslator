@@ -2,7 +2,6 @@ from bin_terminal_translater import core, setting, entrance
 import unittest
 import requests
 import os
-import time
 
 
 class Main_test(unittest.TestCase):
@@ -69,8 +68,12 @@ class Main_test(unittest.TestCase):
         self.assertTrue(os.path.exists(setting.CONF_PARSER),
                         F'Not Found File or Dir :{setting.CONF_PARSER}')
 
-    # def test_Conf(self):
-    #     pass
+    def test_check_options(self):
+        argv = ["Hello"]
+        try:
+            entrance(argv)
+        except AttributeError as er:
+            self.fail(F"options检查没有正常工作, \n{str(er)}")
 
 
 if __name__ == "__main__":
