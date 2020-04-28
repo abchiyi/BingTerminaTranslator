@@ -1,19 +1,21 @@
 from bin_terminal_translater import setting
 
+from typing import Tuple, List, Any, Dict
 import configparser
 import optparse
 import requests
 
 
-def __open_ini__(path) -> configparser.ConfigParser:
+def read_inf(path: str) -> Dict[str, Dict[str, str]]:
+    """读取配置文件"""
     cp = configparser.ConfigParser()
     cp.read(path)
-    return cp
+
+    return dict([(i, dict(cp.items(i))) for i in cp.sections()])
 
 
-def parser_generator() -> optparse.OptionParser:
-    cp = __open_ini__(setting.CONF_PARSER)
-    parser_conf = dict([[i, dict(cp.items(i))] for i in cp.sections()])
+def parser(argv: list) -> Tuple[Any, List[str]]:
+    parser_conf = read_inf(setting.CONF_PARSER)
 
     parser = optparse.OptionParser()
     for option in parser_conf.keys():
@@ -21,29 +23,29 @@ def parser_generator() -> optparse.OptionParser:
             *(F'-{option[0]}', F'--{option}'),
             **parser_conf[option]
         )
-    return parser
+    return parser.parse_args(argv)
 
 
-def translator(text, language_code=None) -> str:
-
-    cp = __open_ini__(setting.CONF_PATH)
-
-    dtb = dict([[i, dict(cp.items(i))] for i in cp.sections()])
-
-    dtb['url'] = dtb.pop('server')['url']
-    dtb['data']['text'] = text
-
+def translator(text: str, language_code: str = '') -> str:
+    conf = read_inf(setting.CONF_PATH)
+    conf['data']['text'] = text
+    # url 数据结构问题 “url” 需要单独提取
+    url = conf.pop('server').pop('url')
     if language_code:
-        dtb['data']['to'] = language_code
+        conf['data']['to'] = language_code
 
     try:
-        response = requests.post(**dtb)
+        response = requests.post(
+            url=url,
+            **conf
+        )
+        # TODO 写死的读取路径，可能引发错误
         return response.json()[0]['translations'][0]['text']
     except KeyError as er:
         raise KeyError(F'KEY:{str(er)}\n{response.json()}')
 
 
-def options_check(func) -> str:
+def options_check(func):
     def run(options):
 
         if not options.language:
