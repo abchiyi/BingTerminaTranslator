@@ -81,8 +81,7 @@ class Main_test(unittest.TestCase):
         try:
             entrance(argv)
         except AttributeError as er:
-            # self.fail(F"options检查没有正常工作, \n{str(er)}")
-            pass
+            self.fail(F"options检查没有正常工作, \n{str(er)}")
 
 
 if __name__ == "__main__":
