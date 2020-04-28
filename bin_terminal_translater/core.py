@@ -4,18 +4,15 @@ from typing import Tuple, List, Any, Dict
 import configparser
 import optparse
 import requests
-import os
 
 
 def options_check(func):
-    def run(argv: list):
-        options, args = func(argv)
+    def run(argv: list) -> str:
+        options, args = parser(argv)
         if not options.language:
-            print('language 参数为空，你需要通过-l 开关来指定它')
-            # 修正装饰器，该退出方法可能引发错错误
-            os._exit(1)
+            return 'language 参数为空，你需要通过-l 开关来指定它'
         else:
-            return options, args
+            return func(options, args)
     return run
 
 
@@ -27,7 +24,6 @@ def read_inf(path: str) -> Dict[str, Dict[str, str]]:
     return dict([(i, dict(cp.items(i))) for i in cp.sections()])
 
 
-@ options_check
 def parser(argv: list) -> Tuple[Any, List[str]]:
     parser_conf = read_inf(setting.CONF_PARSER)
 
