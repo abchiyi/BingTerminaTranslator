@@ -6,15 +6,6 @@ import optparse
 import requests
 
 
-def options_check(func):
-    def run(argv: list) -> str:
-        options, args = parser(argv)
-        if not options.language:
-            return 'language 参数为空，你需要通过-l 开关来指定它'
-        else:
-            return func(options, args)
-    return run
-
 
 def read_inf(path: str) -> Dict[str, Dict[str, str]]:
     """读取配置文件"""
