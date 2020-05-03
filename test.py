@@ -12,6 +12,11 @@ class Main_test(unittest.TestCase):
     def tearDown(self):
         pass
 
+    def check_ini_data(self, data):
+        if type(data.popitem()[1]) == dict:
+            return True
+        return False
+
     def transelator(self, text, lang_code):
         """使用简单的方式直接实现翻译"""
         try:
@@ -82,6 +87,19 @@ class Main_test(unittest.TestCase):
             entrance(argv)
         except AttributeError as er:
             self.fail(F"options检查没有正常工作, \n{str(er)}")
+
+    def test_update_language_code(self):
+        self.assertEqual(type(core.read_inf(setting.LANGUAGE_CODE_PATH)), dict)
+        c = core.update_language_code()
+        self.assertTrue(self.check_ini_data(c))
+
+    def test_can_save_setting(self):
+        path = 'test.ini'
+        os.system(F'echo {path}')
+        data_table = {'test': {'test1': 'test2'}}
+        core.save_ini(path, data_table)
+        self.assertEqual(data_table, core.read_inf('test.ini'))
+        os.system(F'del {path}')
 
 
 if __name__ == "__main__":
