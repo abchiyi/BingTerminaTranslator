@@ -47,7 +47,7 @@ def translator(text: str, language_code: str = '') -> str:
     conf = read_inf(setting.CONF_PATH)
     conf['data']['text'] = text
     # url 数据结构问题 “url” 需要单独提取
-    url = conf.pop('server').pop('url')
+    url = conf.pop('server').pop('translation_engine')
     if language_code:
         conf['data']['to'] = language_code
 
@@ -64,9 +64,10 @@ def translator(text: str, language_code: str = '') -> str:
 
 def update_language_code(debug=False):
     """语言代码更新"""
-    language_code_table = read_inf(setting.LANGUAGE_CODE_PATH)
+    conf_table = read_inf(setting.CONF_PATH)
+
     soup = bs(
-        requests.get(language_code_table['url']['url']).text,
+        requests.get(conf_table['server']['home_page']).text,
         'html.parser'
     )
     all_language = soup.find(id='t_tgtAllLang').find_all('option')
@@ -77,5 +78,6 @@ def update_language_code(debug=False):
     ])
 
     save_ini(setting.LANGUAGE_CODE_PATH, data)
+
     if debug:
         return data
