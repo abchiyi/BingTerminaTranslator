@@ -18,4 +18,5 @@ def entrance(argv: list):
 
     # 语言代码更新块
     if options.update:
-        core.update_language_code()
+        core.update_language_code(debug=True)
+        return "更新完毕"
