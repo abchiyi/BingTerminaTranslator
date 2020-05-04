@@ -20,7 +20,7 @@ class FunctionlTest(unittest.TestCase):
         argv.append('-c')
         copy('')  # 确保剪贴板是空的
         text = entrance(argv)
-        self.assertEqual(text, paste())
+        self.assertEqual(text, paste(), '未能复制翻译文本到剪贴板')
 
         # 没有指定文本时从剪贴板获取文本
         argv = ['-l', 'zh-Hans']
@@ -31,6 +31,10 @@ class FunctionlTest(unittest.TestCase):
 
         # 通过--update 来获取受支持的语言码表
         print(entrance(['--update']))
+
+        # 语言代码验证功能，指出不支持该语言代码
+        text = '不支持的目标语言'
+        self.assertEqual(text, entrance(['-l sssssssss', 'Hello']))
 
 
 if __name__ == "__main__":

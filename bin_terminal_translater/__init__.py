@@ -8,6 +8,10 @@ def entrance(argv: list):
     if options.language:
         # 没有提供文本时从剪贴板获取
         r_text = ' '.join(args) if ' '.join(args) else paste()
+        language_code = options.language.strip()
+        supported_languages = core.read_inf(core.setting.LANGUAGE_CODE_PATH)
+        if language_code not in supported_languages.keys():
+            return "不支持的目标语言"
         text = core.translator(r_text, options.language.strip())
         if options.copy:
             copy(text)
@@ -18,5 +22,5 @@ def entrance(argv: list):
 
     # 语言代码更新块
     if options.update:
-        core.update_language_code(debug=True)
+        core.update_language_code()
         return "更新完毕"
