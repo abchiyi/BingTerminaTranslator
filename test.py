@@ -7,10 +7,10 @@ import os
 class Main_test(unittest.TestCase):
 
     def setUp(self):
-        pass
+        self.test_ini_path = os.path.join(setting.BASE_DIR, 'test.ini')
 
     def tearDown(self):
-        pass
+        os.system(F'del {self.test_ini_path}')
 
     def check_ini_data(self, data):
         if type(data.popitem()[1]) == dict:
@@ -90,15 +90,20 @@ class Main_test(unittest.TestCase):
 
     def test_update_language_code(self):
         self.assertEqual(type(core.read_inf(setting.LANGUAGE_CODE_PATH)), dict)
-        c = core.update_language_code()
+        c = core.update_language_code(debug=True)
         self.assertTrue(self.check_ini_data(c))
 
     def test_can_save_setting(self):
-        path = 'test.ini'
-        os.system(F'echo {path}')
-        data_table = {'test': {'test1': 'test2'}}
-        core.save_ini(path, data_table)
-        self.assertEqual(data_table, core.read_inf('test.ini'))
+        path = self.test_ini_path
+        data_table1 = {'test': {'test1': 'test2'}}
+        core.save_ini(path, data_table1)
+        self.assertEqual(data_table1, core.read_inf('test.ini'))
+
+        data_table2 = {'test3': {'test4': 'test5'}}
+        core.save_ini(path, data_table2)
+        self.assertIn('test3', core.read_inf(path))
+        self.assertIn('test', core.read_inf(path))
+
         os.system(F'del {path}')
 
 

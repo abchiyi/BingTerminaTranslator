@@ -18,5 +18,4 @@ def entrance(argv: list):
 
     # 语言代码更新块
     if options.update:
-        # TODO 未完成的更新函数
-        return "未完成的更新函数"
+        core.update_language_code()
