@@ -1,4 +1,5 @@
 from bin_terminal_translater import setting
+from bin_terminal_translater.public import errors
 
 from typing import Tuple, List, Any, Dict
 from bs4 import BeautifulSoup as bs
@@ -86,13 +87,20 @@ def update_language_code(debug=False):
 class Translator:
 
     def __init__(self, language_code: str, text: str = ''):
-        self.language_code = language_code
+        self.language_code = self.__language_code_check__(language_code)
 
     def __enter__(self):
         return self
 
     def __exit__(self, exc_type, exc_val, exc_tb):
         pass
+
+    def __language_code_check__(self, language_code) -> str:
+        if language_code not in read_inf(setting.LANGUAGE_CODE_PATH):
+            raise errors.TargetLanguageNotSupported(
+                F"不支持的语言:{language_code}"
+            )
+        return language_code
 
     def teranslater(self, text):
         return translator(text, self.language_code)

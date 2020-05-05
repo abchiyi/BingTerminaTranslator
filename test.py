@@ -1,4 +1,5 @@
 from bin_terminal_translater import core, setting, entrance
+from bin_terminal_translater.public import errors
 from faker import Faker
 import unittest
 import requests
@@ -131,6 +132,14 @@ class TEST_NEW_TRANSLATER(unittest.TestCase):
                     t.teranslater(text)
                 )
         time.sleep(0.5)
+
+    def test_not_support_error(self):
+        try:
+            core.Translator(language_code='ssssssss')
+        except errors.TargetLanguageNotSupported:
+            pass
+        else:
+            self.fail('没有捕获到应该出现的错误')
 
 
 if __name__ == "__main__":
