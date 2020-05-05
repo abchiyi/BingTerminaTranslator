@@ -1,6 +1,8 @@
 from bin_terminal_translater import core, setting, entrance
+from faker import Faker
 import unittest
 import requests
+import time
 import os
 
 
@@ -106,6 +108,29 @@ class Main_test(unittest.TestCase):
 
         finally:
             os.system(F'del {self.test_ini_path}')
+
+
+class TEST_NEW_TRANSLATER(unittest.TestCase):
+    def setUp(self):
+        self.tr = core.Translator(language_code='zh-Hans')
+        f = Faker(locale='zh_CN')
+
+        self.some_text = []
+        for i in range(10):
+            self.some_text.append(f.color_name())
+
+    def tearDown(self):
+        pass
+
+    def test_translator_with(self):
+        language_code = 'zh-Hans'
+        with core.Translator(language_code=language_code) as t:
+            for text in self.some_text:
+                self.assertEqual(
+                    core.translator(text, language_code),
+                    t.teranslater(text)
+                )
+        time.sleep(0.5)
 
 
 if __name__ == "__main__":

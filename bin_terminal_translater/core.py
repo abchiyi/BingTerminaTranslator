@@ -81,3 +81,18 @@ def update_language_code(debug=False):
 
     if debug:
         return data
+
+
+class Translator:
+
+    def __init__(self, language_code: str, text: str = ''):
+        self.language_code = language_code
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        pass
+
+    def teranslater(self, text):
+        return translator(text, self.language_code)
