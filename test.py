@@ -5,6 +5,7 @@ import unittest
 import requests
 import time
 import os
+from typing import List
 
 
 class Main_test(unittest.TestCase):
@@ -116,6 +117,9 @@ class TEST_NEW_TRANSLATER(unittest.TestCase):
         self.default_language = 'en'
         self.faker_data = Faker(locale='zh_CN')
 
+        self.some_text: List[str, ] = [self.faker_data.color_name()
+                                       for i in range(5)]
+
     def tearDown(self):
         pass
 
@@ -143,6 +147,26 @@ class TEST_NEW_TRANSLATER(unittest.TestCase):
             str(core.translator(text, self.default_language)),
             str(core.Translator(self.default_language, text))
         )
+
+    def test_split_string(self):
+        """字符串包含翻译引擎无法识别的字符时指定分割符"""
+        texts = [self.faker_data.color_name() for i in range(5)]
+        self.assertEqual(
+            core.translator(' '.join(texts), self.default_language),
+            str(core.Translator(self.default_language, ''.join(texts), split='_')
+                )
+        )
+
+    def test_custom_insert_string(self):
+        text = ' '.join(self.some_text)
+
+        text1 = '_'.join(core.translator(text).split(' '))
+
+        text2 = str(core.Translator(
+            self.default_language, text, ' ', insert=' _')
+        )
+
+        self.assertEqual(text1, text2)
 
 
 class FunctionlTest(unittest.TestCase):

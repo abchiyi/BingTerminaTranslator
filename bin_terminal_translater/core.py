@@ -86,9 +86,17 @@ def update_language_code(debug=False):
 
 class Translator:
 
-    def __init__(self, language_code: str, text: str = ''):
+    def __init__(self,
+                 language_code: str, text: str = '', split: str = '',
+                 insert: str = ''
+                 ):
         self.language_code = self.__language_code_check__(language_code)
-        self.text = text
+        if split:
+            self.text = ' '.join(text.split(split))
+        else:
+            self.text = text
+
+        self.insert = insert
 
     def __enter__(self):
         return self
