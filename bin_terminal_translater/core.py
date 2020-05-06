@@ -88,12 +88,16 @@ class Translator:
 
     def __init__(self, language_code: str, text: str = ''):
         self.language_code = self.__language_code_check__(language_code)
+        self.text = text
 
     def __enter__(self):
         return self
 
     def __exit__(self, exc_type, exc_val, exc_tb):
         pass
+
+    def __str__(self):
+        return self.teranslater(self.text)
 
     def __language_code_check__(self, language_code) -> str:
         if language_code not in read_inf(setting.LANGUAGE_CODE_PATH):

@@ -113,12 +113,8 @@ class Main_test(unittest.TestCase):
 
 class TEST_NEW_TRANSLATER(unittest.TestCase):
     def setUp(self):
-        self.tr = core.Translator(language_code='zh-Hans')
-        f = Faker(locale='zh_CN')
-
-        self.some_text = []
-        for i in range(10):
-            self.some_text.append(f.color_name())
+        self.default_language = 'en'
+        self.faker_data = Faker(locale='zh_CN')
 
     def tearDown(self):
         pass
@@ -126,7 +122,7 @@ class TEST_NEW_TRANSLATER(unittest.TestCase):
     def test_translator_with(self):
         language_code = 'zh-Hans'
         with core.Translator(language_code=language_code) as t:
-            for text in self.some_text:
+            for text in [self.faker_data.color_name() for i in range(2)]:
                 self.assertEqual(
                     core.translator(text, language_code),
                     t.teranslater(text)
@@ -140,6 +136,18 @@ class TEST_NEW_TRANSLATER(unittest.TestCase):
             pass
         else:
             self.fail('没有捕获到应该出现的错误')
+
+    def test_self_string(self):
+        text = self.faker_data.name()
+        self.assertEqual(
+            str(core.translator(text, self.default_language)),
+            str(core.Translator(self.default_language, text))
+        )
+
+
+class FunctionlTest(unittest.TestCase):
+    """TODO 新入口未编写"""
+    pass
 
 
 if __name__ == "__main__":
