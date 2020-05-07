@@ -104,6 +104,9 @@ class Translator:
     def __str__(self):
         return self.teranslater(self.text)
 
+    def __repr__(self):
+        return str(F"<Translator {self.language_code}>")
+
     def __language_code_check__(self, language_code) -> str:
         if language_code not in read_inf(setting.LANGUAGE_CODE_PATH):
             raise errors.TargetLanguageNotSupported(
