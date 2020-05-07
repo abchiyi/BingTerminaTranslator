@@ -134,6 +134,7 @@ class TEST_NEW_TRANSLATER(unittest.TestCase):
         time.sleep(0.5)
 
     def test_not_support_error(self):
+        """在给出不受支持的目标语言代码时抛出错误"""
         try:
             core.Translator(language_code='ssssssss')
         except errors.TargetLanguageNotSupported:
@@ -142,6 +143,7 @@ class TEST_NEW_TRANSLATER(unittest.TestCase):
             self.fail('没有捕获到应该出现的错误')
 
     def test_self_string(self):
+        """Translator对象自身可直接转化为字符串"""
         text = self.faker_data.name()
         self.assertEqual(
             str(core.translator(text, self.default_language)),
@@ -158,6 +160,7 @@ class TEST_NEW_TRANSLATER(unittest.TestCase):
         )
 
     def test_custom_insert_string(self):
+        """定义分隔字符"""
         text = ' '.join(self.some_text)
 
         text1 = '_'.join(core.translator(
@@ -168,6 +171,14 @@ class TEST_NEW_TRANSLATER(unittest.TestCase):
         )
 
         self.assertEqual(text1, text2)
+
+    def test_empty_text_error(self):
+        try:
+            str(core.Translator(text='', language_code=self.default_language))
+        except errors.EmptyTextError:
+            pass
+        else:
+            self.fail("没有捕获到应出现的错误")
 
 
 class FunctionlTest(unittest.TestCase):

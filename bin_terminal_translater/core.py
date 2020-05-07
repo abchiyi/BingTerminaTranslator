@@ -99,6 +99,7 @@ class Translator:
 
     def __auto_execution__(self):
         self.__language_code_check__(self.language_code)
+        self.__text_check__()
 
     def __enter__(self):
         return self
@@ -119,6 +120,10 @@ class Translator:
             )
         return language_code
 
+    def __text_check__(self):
+        if (type(self.text) != str) or(not self.text):
+            raise errors.EmptyTextError("text 参数类型不正确或者为空")
+
     def __replance__(self):
         return self.text.replace(self.__split, (self.__insert or " "))
 
@@ -131,6 +136,8 @@ class Translator:
         self.text = text if text else self.text
         self.__split = split if split else self.__split
         self.__insert = insert if insert else self.__insert
+        # 设置完毕后检查类型
+        self.__auto_execution__()
 
         if (self.__split or self.__insert):
             return translator(self.__replance__(), self.language_code)
