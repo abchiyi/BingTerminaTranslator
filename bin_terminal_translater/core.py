@@ -90,10 +90,15 @@ class Translator:
                  language_code: str, text: str = '', split: str = '',
                  insert: str = ''
                  ):
-        self.language_code = self.__language_code_check__(language_code)
         self.text = text
-        self.split = split
-        self.insert = insert
+        self.__split = split
+        self.__insert = insert
+        self.language_code = language_code
+
+        self.__auto_execution__()
+
+    def __auto_execution__(self):
+        self.__language_code_check__(self.language_code)
 
     def __enter__(self):
         return self
@@ -102,7 +107,7 @@ class Translator:
         pass
 
     def __str__(self):
-        return self.teranslater(self.text)
+        return self.teranslater()
 
     def __repr__(self):
         return str(F"<Translator {self.language_code}>")
@@ -114,11 +119,20 @@ class Translator:
             )
         return language_code
 
-    def teranslater(self, text, split: str = '', insert: str = ''):
-        if (self.split or split):
-            # 翻译引擎可识别空格,以空格分隔字符串一次性发生文本,减少请求次数
-            text = ' '.join(text.split(self.split))
-            return F"{ (self.insert or insert)  or ' '  }".join(text.split(' '))
+    def __replance__(self):
+        return self.text.replace(self.__split, (self.__insert or " "))
+
+    def teranslater(self,
+                    text: str = None,
+                    split: str = None,
+                    insert: str = None
+                    ) -> str:
+
+        self.text = text if text else self.text
+        self.__split = split if split else self.__split
+        self.__insert = insert if insert else self.__insert
+
+        if (self.__split or self.__insert):
+            return translator(self.__replance__(), self.language_code)
         else:
-            self.text = text
-        return translator(text, self.language_code)
+            return translator(self.text, self.language_code)

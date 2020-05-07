@@ -149,11 +149,11 @@ class TEST_NEW_TRANSLATER(unittest.TestCase):
         )
 
     def test_split_string(self):
-        """字符串包含翻译引擎无法识别的字符时指定分割符"""
+        """字符串包含翻译引擎无法识别的字符时,指定分割符"""
         texts = [self.faker_data.color_name() for i in range(5)]
         self.assertEqual(
             core.translator(' '.join(texts), self.default_language),
-            str(core.Translator(self.default_language, ''.join(texts), split='_')
+            str(core.Translator(self.default_language, "_".join(texts), split='_')
                 )
         )
 
