@@ -91,11 +91,8 @@ class Translator:
                  insert: str = ''
                  ):
         self.language_code = self.__language_code_check__(language_code)
-        if split:
-            self.text = ' '.join(text.split(split))
-        else:
-            self.text = text
-
+        self.text = text
+        self.split = split
         self.insert = insert
 
     def __enter__(self):
@@ -114,5 +111,11 @@ class Translator:
             )
         return language_code
 
-    def teranslater(self, text):
+    def teranslater(self, text, split: str = '', insert: str = ''):
+        if (self.split or split):
+            # 翻译引擎可识别空格,以空格分隔字符串一次性发生文本,减少请求次数
+            text = ' '.join(text.split(self.split))
+            return F"{ (self.insert or insert)  or ' '  }".join(text.split(' '))
+        else:
+            self.text = text
         return translator(text, self.language_code)

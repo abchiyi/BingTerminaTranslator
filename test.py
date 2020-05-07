@@ -160,10 +160,11 @@ class TEST_NEW_TRANSLATER(unittest.TestCase):
     def test_custom_insert_string(self):
         text = ' '.join(self.some_text)
 
-        text1 = '_'.join(core.translator(text).split(' '))
+        text1 = '_'.join(core.translator(
+            text, self.default_language).split(' '))
 
         text2 = str(core.Translator(
-            self.default_language, text, ' ', insert=' _')
+            self.default_language, text, ' ', insert='_')
         )
 
         self.assertEqual(text1, text2)
