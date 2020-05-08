@@ -144,7 +144,7 @@ class TEST_NEW_TRANSLATER(unittest.TestCase):
                     core.translator(text, language_code),
                     t.teranslater(text)
                 )
-        time.sleep(0.5)
+                time.sleep(0.5)
 
     def test_not_support_error(self):
         """在给出不受支持的目标语言代码时抛出错误"""

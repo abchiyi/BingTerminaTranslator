@@ -124,20 +124,19 @@ class Translator:
         else:
             return text
 
-    def __replance__(self):
-        return self.text.replace(self.__split, (self.__insert or " "))
-
     def teranslater(self,
-                    text: str = None,
-                    split: str = None,
-                    insert: str = None
+                    text: str = "",
+                    split: str = "",
+                    insert: str = ""
                     ) -> str:
-
-        self.text = self.__text_check__(text if text else self.text)
-        self.__split = split if split else self.__split
-        self.__insert = insert if insert else self.__insert
+        # TODO 期待指定的额外参数只生效一次
+        text = self.__text_check__(text if text else self.text)
+        split = split if split else self.__split
+        insert = insert if insert else self.__insert
 
         if (self.__split or self.__insert):
-            return translator(self.__replance__(), self.language_code)
+            return translator(
+                text.replace(split, (insert or " ")),
+                self.language_code)
         else:
-            return translator(self.text, self.language_code)
+            return translator(text, self.language_code)
