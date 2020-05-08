@@ -117,6 +117,7 @@ class Translator:
         return language_code
 
     def __text_check__(self, text):
+        text = text.strip()
         if (type(text) != str) or(not text):
             raise errors.EmptyTextError(
                 F"参数类型不正确或者为空: text:'{self.text}'"

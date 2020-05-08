@@ -186,12 +186,24 @@ class TEST_NEW_TRANSLATER(unittest.TestCase):
         self.assertEqual(text1, text2)
 
     def test_empty_text_error(self):
+        """在没有给出文本时的错误"""
         try:
             str(core.Translator(text='', language_code=self.default_language))
         except errors.EmptyTextError:
             pass
         else:
             self.fail("没有捕获到应出现的错误")
+
+    def test_space_characters_400Code_error(self):
+        """字符为一个空格时的处理方式应按照无效字符处理"""
+        text = " "
+        if text:
+            try:
+                str(core.Translator('zh-Hans', text))
+            except errors.EmptyTextError:
+                pass
+            else:
+                self.fail("未捕获到应该出现的错误")
 
 
 class FunctionlTest(unittest.TestCase):
