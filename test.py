@@ -11,7 +11,7 @@ from typing import List
 class Main_test(unittest.TestCase):
 
     def setUp(self):
-        self.test_ini_path = os.path.join(setting.BASE_DIR, 'test.ini')
+        self.test_ini_path = os.path.join(setting.BASE_DIR_INSIDE, 'test.ini')
 
     def tearDown(self):
         pass
@@ -73,8 +73,8 @@ class Main_test(unittest.TestCase):
         self.assertEqual(text, self.transelator(' '.join(a), lang_code))
 
     def test_base_dir_and_file(self):
-        self.assertTrue(os.path.exists(setting.BASE_DIR),
-                        F"Not Found FIle of Fir :{setting.BASE_DIR}")
+        self.assertTrue(os.path.exists(setting.BASE_DIR_INSIDE),
+                        F"Not Found FIle of Fir :{setting.BASE_DIR_INSIDE}")
         self.assertTrue(os.path.exists(setting.CONF_PATH),
                         F'Not Found File or Dir :{setting.CONF_PATH}')
         self.assertTrue(os.path.exists(setting.CONF_PARSER),
@@ -98,7 +98,7 @@ class Main_test(unittest.TestCase):
 
     def test_can_save_setting(self):
         try:
-            path = self.test_ini_path
+            path = os.path.join(setting.BASE_DIR_OUTSIDE, 'test.ini')
             data_table1 = {'test': {'test1': 'test2'}}
             core.save_ini(path, data_table1)
             self.assertEqual(data_table1, core.read_inf('test.ini'))
@@ -109,7 +109,7 @@ class Main_test(unittest.TestCase):
             self.assertIn('test', core.read_inf(path))
 
         finally:
-            os.system(F'del {self.test_ini_path}')
+            os.system(F'del {path}')
 
 
 class TEST_NEW_TRANSLATER(unittest.TestCase):
