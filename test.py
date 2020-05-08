@@ -6,12 +6,14 @@ import requests
 import time
 import os
 from typing import List
+import optparse
 
 
 class Main_test(unittest.TestCase):
+    """old test"""
 
     def setUp(self):
-        self.test_ini_path = os.path.join(setting.BASE_DIR_INSIDE, 'test.ini')
+        self.test_ini_path = os.path.join(setting.BASE_DIR_OUTSIDE, 'test.ini')
 
     def tearDown(self):
         pass
@@ -22,7 +24,6 @@ class Main_test(unittest.TestCase):
         return False
 
     def transelator(self, text, lang_code):
-        """使用简单的方式直接实现翻译"""
         try:
             dtb = {
                 "url": "https://cn.bing.com/ttranslatev3?isVertical=1&&IG=ECCC2E222205418FB249C51DB6C943BF&IID=translator.5028.1",
@@ -45,8 +46,20 @@ class Main_test(unittest.TestCase):
             raise er
 
     def test_parser(self):
-        o, a = core.parser(["-l", "zh-Hans", "Hello"])
-        self.assertEqual(type(a), list)
+        argv = ["-l", "zh-Hans", "Hello"]
+        parser = optparse.OptionParser()
+        parser_conf = core.read_inf(setting.CONF_PARSER)
+        for option in parser_conf:
+            parser.add_option(
+                *(F'-{option[0]}', F'--{option}'),
+                **parser_conf[option]
+            )
+        o, a = parser.parse_args(argv)
+        oo, aa = core.parser(argv)
+
+        # 始终保持输出一致
+        self.assertEqual(o, oo, oo)
+        self.assertEqual(a, aa, aa)
 
     def test_translator(self):
         r_text = 'Hello'
@@ -98,7 +111,7 @@ class Main_test(unittest.TestCase):
 
     def test_can_save_setting(self):
         try:
-            path = os.path.join(setting.BASE_DIR_OUTSIDE, 'test.ini')
+            path = self.test_ini_path
             data_table1 = {'test': {'test1': 'test2'}}
             core.save_ini(path, data_table1)
             self.assertEqual(data_table1, core.read_inf('test.ini'))
