@@ -32,9 +32,10 @@ class FunctionlTest(unittest.TestCase):
         # 通过--update 来获取受支持的语言码表
         print(entrance(['--update']))
 
+    def test_not_suport_language_code(self):
         # 语言代码验证功能，指出不支持该语言代码
-        text = '不支持的目标语言'
-        self.assertEqual(text, entrance(['-l sssssssss', 'Hello']))
+        text = '不受支持的目标语言，你可以尝试更新语言代码'
+        self.assertEqual(text, entrance(['-l sssssssss', 'some']))
 
 
 if __name__ == "__main__":

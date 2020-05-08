@@ -1,4 +1,6 @@
 from pyperclip import paste, copy
+from bin_terminal_translater.core import Translator
+from bin_terminal_translater.public import errors
 from bin_terminal_translater import core
 
 
@@ -9,10 +11,12 @@ def entrance(argv: list):
         # 没有提供文本时从剪贴板获取
         r_text = ' '.join(args) if ' '.join(args) else paste()
         language_code = options.language.strip()
-        supported_languages = core.read_inf(core.setting.LANGUAGE_CODE_PATH)
-        if language_code not in supported_languages.keys():
-            return "不支持的目标语言"
-        text = core.translator(r_text, options.language.strip())
+        try:
+            text = str(Translator(language_code, r_text))
+        except errors.EmptyTextError:
+            return "空文本"
+        except errors.TargetLanguageNotSupported:
+            return "不受支持的目标语言，你可以尝试更新语言代码"
         if options.copy:
             copy(text)
         return text

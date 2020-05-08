@@ -114,7 +114,8 @@ class Translator:
             raise errors.TargetLanguageNotSupported(
                 F"不支持的语言:{language_code}"
             )
-        return language_code
+        else:
+            return language_code
 
     def __text_check__(self, text):
         text = text.strip()
