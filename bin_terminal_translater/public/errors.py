@@ -4,3 +4,7 @@ class TargetLanguageNotSupported(Exception):
 
 class EmptyTextError(Exception):
     pass
+
+
+class FileError(Exception):
+    pass

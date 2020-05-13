@@ -206,6 +206,21 @@ class TEST_NEW_TRANSLATER(unittest.TestCase):
                 self.fail("未捕获到应该出现的错误")
 
 
+class ErrorsTest(unittest.TestCase):
+
+    def test_file_notfound(self):
+        """配置文件读写函数在找不到文件时抛出错误"""
+        try:
+            path = './test.ini'
+            os.system(F'del {path}')
+            core.read_inf(path)
+            core.save_ini(path, {})
+        except errors.FileError:
+            pass
+        else:
+            self.fail('应该出现的错误')
+
+
 class FunctionlTest(unittest.TestCase):
     """TODO 新入口未编写"""
     pass

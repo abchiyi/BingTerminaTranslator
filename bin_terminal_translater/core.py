@@ -1,11 +1,23 @@
 from bin_terminal_translater import setting
 from bin_terminal_translater.public import errors
 
+from configparser import ConfigParser, NoSectionError
 from typing import Tuple, List, Any, Dict
 from bs4 import BeautifulSoup as bs
-from configparser import ConfigParser, NoSectionError
 import optparse
 import requests
+import os
+
+
+def file_check(func):
+    def run(path, *argv, **kwargs):
+        if os.access(path, os.F_OK) and (
+            os.access(path, os.R_OK) and os.access(path, os.W_OK)
+        ):
+            return func(path, *argv, **kwargs)
+        else:
+            raise errors.FileError('没有找到配置文件，或文件不可访问')
+    return run
 
 
 def read_inf(path: str) -> Dict[str, Dict[str, str]]:
