@@ -11,15 +11,16 @@ import os
 
 def file_check(func):
     def run(path, *argv, **kwargs):
-        if os.access(path, os.F_OK) and (
-            os.access(path, os.R_OK) and os.access(path, os.W_OK)
-        ):
+        if os.access(path, os.F_OK) and os.access(path, os.R_OK):
             return func(path, *argv, **kwargs)
         else:
-            raise errors.FileError('没有找到配置文件，或文件不可访问')
+            raise errors.FileError(
+                F'没有找到配置文件，或文件不可访问： \n{path}'
+            )
     return run
 
 
+# @file_check
 def read_inf(path: str) -> Dict[str, Dict[str, str]]:
     """读取配置文件"""
     cp = ConfigParser()

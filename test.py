@@ -209,12 +209,11 @@ class TEST_NEW_TRANSLATER(unittest.TestCase):
 class ErrorsTest(unittest.TestCase):
 
     def test_file_notfound(self):
-        """配置文件读写函数在找不到文件时抛出错误"""
+        """配置文件读函数在找不到文件时抛出错误"""
         try:
-            path = './test.ini'
+            path = './sr.ini'
             os.system(F'del {path}')
             core.read_inf(path)
-            core.save_ini(path, {})
         except errors.FileError:
             pass
         else:
