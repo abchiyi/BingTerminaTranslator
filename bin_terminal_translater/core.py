@@ -20,7 +20,7 @@ def file_check(func):
     return run
 
 
-# @file_check
+@file_check
 def read_inf(path: str) -> Dict[str, Dict[str, str]]:
     """读取配置文件"""
     cp = ConfigParser()

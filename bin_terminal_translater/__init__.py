@@ -5,7 +5,6 @@ from bin_terminal_translater import core
 
 
 def entrance(argv: list):
-    print(__file__)
     options, args = core.parser(argv)
     # 翻译块
     if options.language:
