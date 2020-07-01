@@ -138,11 +138,11 @@ class TEST_NEW_TRANSLATER(unittest.TestCase):
 
     def test_translator_with(self):
         language_code = 'zh-Hans'
-        with core.Translator(language_code=language_code) as t:
+        with core.Translator(language_code=language_code) as translator:
             for text in [self.faker_data.color_name() for i in range(2)]:
                 self.assertEqual(
                     core.translator(text, language_code),
-                    t.teranslater(text)
+                    translator.teranslater(text)
                 )
                 time.sleep(0.5)
 
@@ -164,37 +164,44 @@ class TEST_NEW_TRANSLATER(unittest.TestCase):
         )
 
     def test_split_string(self):
-        """字符串包含翻译引擎无法识别的字符时,指定分割符"""
+        """
+        字符串包含翻译引擎无法识别的字符时,指定分割符,
+        以及确保对象方法的参数有效
+        """
         texts = [self.faker_data.color_name() for i in range(5)]
+        text = ' '.join(texts)
         self.assertEqual(
-            core.translator(' '.join(texts), self.default_language),
-            str(core.Translator(self.default_language, "_".join(texts), split='_')
+            text,
+            str(
+                core.Translator(
+                    'en',
+                    text.replace(' ', '_'),
+                    '_',
+                    ' '
                 )
+            )
         )
 
-    def test_custom_insert_string(self):
-        """定义分隔字符"""
-        text = ' '.join(self.some_text)
-
-        text1 = '_'.join(core.translator(
-            text, self.default_language).split(' '))
-
-        text2 = str(core.Translator(
-            self.default_language, text, ' ', insert='_')
+        text = text.replace(' ', '_')
+        translater = core.Translator('en', text, '_', ' ')
+        self.assertNotEqual(
+            translater,
+            translater.teranslater(text, '', '')
         )
-
-        self.assertEqual(text1, text2)
 
     def test_empty_text_error(self):
         """在没有给出文本时的错误"""
         try:
-            str(core.Translator(text='', language_code=self.default_language))
+            print(
+                core.Translator(
+                    language_code=self.default_language
+                ).teranslater('  '))
         except errors.EmptyTextError:
             pass
         else:
             self.fail("没有捕获到应出现的错误")
 
-    def test_space_characters_400Code_error(self):
+    def test_space_characters(self):
         """字符为一个空格时的处理方式应按照无效字符处理"""
         text = " "
         if text:

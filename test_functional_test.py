@@ -4,6 +4,7 @@ from pyperclip import copy, paste
 
 
 class FunctionlTest(unittest.TestCase):
+    """功能测试"""
 
     def setUp(self):
         pass

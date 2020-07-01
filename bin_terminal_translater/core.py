@@ -22,11 +22,13 @@ def file_check(func):
 
 @file_check
 def read_inf(path: str) -> Dict[str, Dict[str, str]]:
-    """读取配置文件"""
+    # """读取配置文件""" b  m,
     cp = ConfigParser()
     cp.read(path, encoding='UTF-8')
+    s = {i: dict(cp.items(i)) for i in cp.sections()}
 
-    return dict([(i, dict(cp.items(i))) for i in cp.sections()])
+    # s = dict([(i, dict(cp.items(i))) for i in cp.sections()])
+    return s
 
 
 def save_ini(path: str, data_table: Dict[str, Dict[str, str]]):
@@ -72,8 +74,8 @@ def translator(text: str, language_code: str = '') -> str:
         )
         # TODO 写死的读取路径，可能引发错误
         return response.json()[0]['translations'][0]['text']
-    except KeyError as er:
-        raise KeyError(F'KEY:{str(er)}\n{response.json()}')
+    except KeyError as error:
+        raise KeyError(F'KEY:{str(error)} not found in {response.json()}')
 
 
 def update_language_code(debug=False):
@@ -98,17 +100,24 @@ def update_language_code(debug=False):
 
 
 class Translator:
+    """必应翻译"""
 
     def __init__(self,
                  language_code: str,
-                 text: str = "",
-                 split: str = "",
-                 insert: str = ""
+                 text: str = None,
+                 split: str = None,
+                 insert: str = None
                  ):
         self.text = text
         self.__split = split
         self.__insert = insert
-        self.language_code = self.__language_code_check__(language_code)
+
+        if language_code in read_inf(setting.LANGUAGE_CODE_PATH):
+            self.language_code = language_code
+        else:
+            raise errors.TargetLanguageNotSupported(
+                F"不支持的语言:{language_code}"
+            )
 
     def __enter__(self):
         return self
@@ -117,41 +126,21 @@ class Translator:
         pass
 
     def __str__(self):
-        return self.teranslater()
+        if self.text:
+            return self.teranslater(self.text, self.__split, self.__insert)
+        return self.__repr__()
 
     def __repr__(self):
         return str(F"<Translator {self.language_code}>")
 
-    def __language_code_check__(self, language_code) -> str:
-        if language_code not in read_inf(setting.LANGUAGE_CODE_PATH):
-            raise errors.TargetLanguageNotSupported(
-                F"不支持的语言:{language_code}"
-            )
-        else:
-            return language_code
-
-    def __text_check__(self, text):
-        text = text.strip()
-        if (type(text) != str) or(not text):
-            raise errors.EmptyTextError(
-                F"参数类型不正确或者为空: text:'{self.text}'"
-            )
-        else:
-            return text
-
     def teranslater(self,
                     text: str = "",
-                    split: str = "",
-                    insert: str = ""
+                    split: str = None,
+                    insert: str = None
                     ) -> str:
-        # TODO 期待指定的额外参数只生效一次
-        text = self.__text_check__(text if text else self.text)
-        split = split if split else self.__split
-        insert = insert if insert else self.__insert
+        if not text.strip():
+            raise errors.EmptyTextError(F'无效的字符串:"{text}"')
 
-        if (self.__split or self.__insert):
-            return translator(
-                text.replace(split, (insert or " ")),
-                self.language_code)
-        else:
-            return translator(text, self.language_code)
+        return translator(
+            text.strip().replace(split or '', insert or ''),
+            self.language_code)
