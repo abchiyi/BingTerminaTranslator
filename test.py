@@ -1,12 +1,14 @@
+import optparse
+import os
+import time
+import unittest
+from typing import List
+
+import requests
+from faker import Faker
+
 from bin_terminal_translater import core, setting, entrance
 from bin_terminal_translater.public import errors
-from faker import Faker
-import unittest
-import requests
-import time
-import os
-from typing import List
-import optparse
 
 
 class Main_test(unittest.TestCase):
@@ -142,7 +144,7 @@ class TEST_NEW_TRANSLATER(unittest.TestCase):
             for text in [self.faker_data.color_name() for i in range(2)]:
                 self.assertEqual(
                     core.translator(text, language_code),
-                    translator.teranslater(text)
+                    translator.translator(text)
                 )
                 time.sleep(0.5)
 
@@ -186,7 +188,7 @@ class TEST_NEW_TRANSLATER(unittest.TestCase):
         translater = core.Translator('en', text, '_', ' ')
         self.assertNotEqual(
             translater,
-            translater.teranslater(text, '', '')
+            translater.translator(text, '', '')
         )
 
     def test_empty_text_error(self):
@@ -195,7 +197,7 @@ class TEST_NEW_TRANSLATER(unittest.TestCase):
             print(
                 core.Translator(
                     language_code=self.default_language
-                ).teranslater('  '))
+                ).translator('  '))
         except errors.EmptyTextError:
             pass
         else:

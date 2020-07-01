@@ -1,22 +1,23 @@
-from bin_terminal_translater import setting
-from bin_terminal_translater.public import errors
-
+import optparse
+import os
 from configparser import ConfigParser, NoSectionError
 from typing import Tuple, List, Any, Dict
-from bs4 import BeautifulSoup as bs
-import optparse
+
+import bs4
 import requests
-import os
+
+from bin_terminal_translater import setting
+from bin_terminal_translater.public import errors
 
 
 def file_check(func):
     def run(path, *argv, **kwargs):
         if os.access(path, os.F_OK) and os.access(path, os.R_OK):
             return func(path, *argv, **kwargs)
-        else:
-            raise errors.FileError(
-                F'没有找到配置文件，或文件不可访问： \n{path}'
-            )
+        raise errors.FileError(
+            F'没有找到配置文件，或文件不可访问： \n{path}'
+        )
+
     return run
 
 
@@ -50,13 +51,13 @@ def save_ini(path: str, data_table: Dict[str, Dict[str, str]]):
 def parser(argv: list) -> Tuple[Any, List[str]]:
     parser_conf = read_inf(setting.CONF_PARSER)
 
-    parser = optparse.OptionParser()
+    p = optparse.OptionParser()
     for option in parser_conf.keys():
-        parser.add_option(
+        p.add_option(
             *(F'-{option[0]}', F'--{option}'),
             **parser_conf[option]
         )
-    return parser.parse_args(argv)
+    return p.parse_args(argv)
 
 
 def translator(text: str, language_code: str = '') -> str:
@@ -66,37 +67,27 @@ def translator(text: str, language_code: str = '') -> str:
     url = conf.pop('server').pop('translation_engine')
     if language_code:
         conf['data']['to'] = language_code
-
+    response = requests.post(url, **conf)
     try:
-        response = requests.post(
-            url=url,
-            **conf
-        )
         # TODO 写死的读取路径，可能引发错误
         return response.json()[0]['translations'][0]['text']
     except KeyError as error:
         raise KeyError(F'KEY:{str(error)} not found in {response.json()}')
 
 
-def update_language_code(debug=False):
+def update_language_code():
     """语言代码更新"""
     conf_table = read_inf(setting.CONF_PATH)
 
-    soup = bs(
+    soup = bs4.BeautifulSoup(
         requests.get(conf_table['server']['home_page']).text,
         'html.parser'
     )
     all_language = soup.find(id='t_tgtAllLang').find_all('option')
 
-    data = dict([
-        (i.attrs['value'], dict([('text', i.text)]))
-        for i in all_language
-    ])
+    data = {i.attrs['value']: {'text': i.text} for i in all_language}
 
     save_ini(setting.LANGUAGE_CODE_PATH, data)
-
-    if debug:
-        return data
 
 
 class Translator:
@@ -127,17 +118,17 @@ class Translator:
 
     def __str__(self):
         if self.text:
-            return self.teranslater(self.text, self.__split, self.__insert)
+            return self.translator(self.text, self.__split, self.__insert)
         return self.__repr__()
 
     def __repr__(self):
         return str(F"<Translator {self.language_code}>")
 
-    def teranslater(self,
-                    text: str = "",
-                    split: str = None,
-                    insert: str = None
-                    ) -> str:
+    def translator(self,
+                   text: str = "",
+                   split: str = None,
+                   insert: str = None
+                   ) -> str:
         if not text.strip():
             raise errors.EmptyTextError(F'无效的字符串:"{text}"')
 
