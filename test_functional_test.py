@@ -1,9 +1,11 @@
 import unittest
-from bin_terminal_translater import entrance
+
 from pyperclip import copy, paste
 
+from bin_terminal_translater import entrance
 
-class FunctionlTest(unittest.TestCase):
+
+class FunctionalTest(unittest.TestCase):
     """功能测试"""
 
     def setUp(self):
@@ -33,7 +35,7 @@ class FunctionlTest(unittest.TestCase):
         # 通过--update 来获取受支持的语言码表
         print(entrance(['--update']))
 
-    def test_not_suport_language_code(self):
+    def test_not_support_language_code(self):
         # 语言代码验证功能，指出不支持该语言代码
         text = '不受支持的目标语言，你可以尝试更新语言代码'
         self.assertEqual(text, entrance(['-l sssssssss', 'some']))

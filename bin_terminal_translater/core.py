@@ -23,7 +23,7 @@ def file_check(func):
 
 @file_check
 def read_inf(path: str) -> Dict[str, Dict[str, str]]:
-    # """读取配置文件""" b  m,
+    """读取配置文件"""
     cp = ConfigParser()
     cp.read(path, encoding='UTF-8')
     s = {i: dict(cp.items(i)) for i in cp.sections()}
@@ -69,7 +69,7 @@ def translator(text: str, language_code: str = '') -> str:
         conf['data']['to'] = language_code
     response = requests.post(url, **conf)
     try:
-        # TODO 写死的读取路径，可能引发错误
+        # TODO 固定读取路径，可能引发错误
         return response.json()[0]['translations'][0]['text']
     except KeyError as error:
         raise KeyError(F'KEY:{str(error)} not found in {response.json()}')
