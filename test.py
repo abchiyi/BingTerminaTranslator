@@ -22,7 +22,7 @@ class MainTest(unittest.TestCase):
 
     @staticmethod
     def check_ini_data(data):
-        if type(data.popitem()[1]) == dict:
+        if isinstance(data.popitem(), dict):
             return True
         return False
 
