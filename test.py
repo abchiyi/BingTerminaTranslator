@@ -22,7 +22,8 @@ class MainTest(unittest.TestCase):
 
     @staticmethod
     def check_ini_data(data):
-        if isinstance(data.popitem(), dict):
+        # FIXME 故障的检查函数
+        if isinstance(data.popitem()[0], dict):
             return True
         return False
 
@@ -47,9 +48,9 @@ class MainTest(unittest.TestCase):
         res = requests.post(**dtb).json()
         try:
             return res[0]['translations'][0]['text']
-        except KeyError as er:
+        except KeyError as error:
             print(res)
-            raise er
+            raise error
 
     def test_parser(self):
         argv = ["-l", "zh-Hans", "Hello"]
@@ -60,12 +61,12 @@ class MainTest(unittest.TestCase):
                 *(F'-{option[0]}', F'--{option}'),
                 **parser_conf[option]
             )
-        o, ka = parser.parse_args(argv)
+        o, a = parser.parse_args(argv)
         oo, aa = core.parser(argv)
 
         # 始终保持输出一致
-        self.assertEqual(o, oo, oo)
-        self.assertEqual(argv, aa, aa)
+        self.assertEqual(o, oo)
+        self.assertEqual(a, aa)
 
     def test_translator(self):
         r_text = 'Hello'
@@ -111,9 +112,10 @@ class MainTest(unittest.TestCase):
             self.fail(F"options检查没有正常工作, \n{str(er)}")
 
     def test_update_language_code(self):
-        self.assertEqual(type(core.read_inf(setting.LANGUAGE_CODE_PATH)), dict)
-        c = core.update_language_code()
-        self.assertTrue(self.check_ini_data(c))
+        tgt_lan_of_net_work = core.update_language_code()
+        tgt_lag_of_file = core.read_inf(setting.LANGUAGE_CODE_PATH)
+
+        self.assertEqual(tgt_lag_of_file, tgt_lan_of_net_work)
 
     def test_can_save_setting(self):
         path = self.test_ini_path
@@ -136,8 +138,8 @@ class TestNewTranslate(unittest.TestCase):
         self.default_language = 'en'
         self.faker_data = Faker(locale='zh_CN')
 
-        self.some_text: List[str,] = [self.faker_data.color_name()
-                                      for i in range(5)]
+        self.some_text: List[str, ] = [self.faker_data.color_name()
+                                       for i in range(5)]
 
     def tearDown(self):
         pass

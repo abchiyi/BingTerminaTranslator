@@ -77,17 +77,19 @@ def translator(text: str, language_code: str = '') -> str:
 
 def update_language_code():
     """语言代码更新"""
+    # 读取配置
     conf_table = read_inf(setting.CONF_PATH)
-
-    soup = bs4.BeautifulSoup(
+    # 读取页面，并获取所有语言标签
+    tgt_all_lang = bs4.BeautifulSoup(
         requests.get(conf_table['server']['home_page']).text,
         'html.parser'
-    )
-    all_language = soup.find(id='t_tgtAllLang').find_all('option')
+    ).find(id='t_tgtAllLang').find_all('option')
 
-    data = {i.attrs['value']: {'text': i.text} for i in all_language}
-
+    # 格式化为标准字典
+    data = {i.attrs['value']: {'text': i.text} for i in tgt_all_lang}
     save_ini(setting.LANGUAGE_CODE_PATH, data)
+    return data
+    # 保存
 
 
 class Translator:
