@@ -24,40 +24,38 @@ def file_check(func):
 @file_check
 def read_inf(path: str) -> Dict[str, Dict[str, str]]:
     """读取配置文件"""
-    cp = ConfigParser()
-    cp.read(path, encoding='UTF-8')
-    s = {i: dict(cp.items(i)) for i in cp.sections()}
+    c_p = ConfigParser()
+    c_p.read(path, encoding='UTF-8')
 
-    # s = dict([(i, dict(cp.items(i))) for i in cp.sections()])
-    return s
+    return {i: dict(c_p.items(i)) for i in c_p.sections()}
 
 
 def save_ini(path: str, data_table: Dict[str, Dict[str, str]]):
-    cp = ConfigParser()
-    cp.read(path, encoding='UTF-8')
+    c_p = ConfigParser()
+    c_p.read(path, encoding='UTF-8')
 
     for section in data_table.keys():
         for option in data_table[section].keys():
             try:
-                cp.set(section, option, data_table[section][option])
+                c_p.set(section, option, data_table[section][option])
             except NoSectionError:
-                cp.add_section(section)
-                cp.set(section, option, data_table[section][option])
+                c_p.add_section(section)
+                c_p.set(section, option, data_table[section][option])
 
-    with open(path, 'w', encoding='UTF-8') as f:
-        cp.write(f)
+    with open(path, 'w', encoding='UTF-8') as file:
+        c_p.write(file)
 
 
 def parser(argv: list) -> Tuple[Any, List[str]]:
     parser_conf = read_inf(setting.CONF_PARSER)
 
-    p = optparse.OptionParser()
+    o_p = optparse.OptionParser()
     for option in parser_conf.keys():
-        p.add_option(
+        o_p.add_option(
             *(F'-{option[0]}', F'--{option}'),
             **parser_conf[option]
         )
-    return p.parse_args(argv)
+    return o_p.parse_args(argv)
 
 
 def translator(text: str, language_code: str = '') -> str:
@@ -69,7 +67,7 @@ def translator(text: str, language_code: str = '') -> str:
         conf['data']['to'] = language_code
     response = requests.post(url, **conf)
     try:
-        # TODO 固定读取路径，可能引发错误
+        # FIXME 固定读取路径，可能引发错误
         return response.json()[0]['translations'][0]['text']
     except KeyError as error:
         raise KeyError(F'KEY:{str(error)} not found in {response.json()}')

@@ -21,20 +21,21 @@ class MainTest(unittest.TestCase):
         pass
 
     @staticmethod
-    def check_ini_data(data):
-        # FIXME 故障的检查函数
-        if isinstance(data.popitem()[0], dict):
-            return True
-        return False
-
-    @staticmethod
     def translator(text, lang_code):
         dtb = {
-            "url": "https://cn.bing.com/ttranslatev3?isVertical=1&&IG=ECCC2E222205418FB249C51DB6C943BF&IID"
-                   "=translator.5028.1",
+            "url": ''.join(['https://cn.bing.com/',
+                            'ttranslatev3?isVertical=1&',
+                            '&IG=ECCC2E222205418FB249C51DB6C943BF&',
+                            'IID=translator.5028.1'
+                            ]),
             "headers": {
-                "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) "
-                              "Chrome/80.0.3987.132 Safari/537.36 Edg/80.0.361.66 "
+                "user-agent": ' '.join([
+                    'Mozilla/5.0',
+                    '(Windows NT 10.0; Win64; x64)',
+                    'AppleWebKit/537.36',
+                    '(KHTML, like Gecko)',
+                    'Chrome/80.0.3987.132 Safari/537.36 Edg/80.0.361.66'
+                ])
             },
             'data': {
                 "fromLang": "auto-detect",
@@ -61,6 +62,7 @@ class MainTest(unittest.TestCase):
                 *(F'-{option[0]}', F'--{option}'),
                 **parser_conf[option]
             )
+        # 即将被升级换代的函数
         o, a = parser.parse_args(argv)
         oo, aa = core.parser(argv)
 
@@ -72,13 +74,12 @@ class MainTest(unittest.TestCase):
         r_text = 'Hello'
         lang_code = 'zh-Hans'
 
-        # 使用核心内函数进行翻译请求
-        t1 = core.translator(r_text, lang_code)
-
-        # 使用同样的参数配置手动请求
-        t2 = self.translator(r_text, lang_code)
-
-        self.assertEqual(t1, t2)
+        self.assertEqual(
+            # 使用核心内函数进行翻译请求
+            core.translator(r_text, lang_code),
+            # 使用同样的参数配置手动请求
+            self.translator(r_text, lang_code)
+        )
 
     def test_entrance(self):
         lang_code = 'zh-Hans'
@@ -108,8 +109,8 @@ class MainTest(unittest.TestCase):
         argv = ["Hello"]
         try:
             entrance(argv)
-        except AttributeError as er:
-            self.fail(F"options检查没有正常工作, \n{str(er)}")
+        except AttributeError as error:
+            self.fail(F"options检查没有正常工作, \n{str(error)}")
 
     def test_update_language_code(self):
         tgt_lan_of_net_work = core.update_language_code()
@@ -233,11 +234,6 @@ class ErrorsTest(unittest.TestCase):
             pass
         else:
             self.fail('应该出现的错误')
-
-
-class FunctionlTest(unittest.TestCase):
-    """TODO 新入口未编写"""
-    pass
 
 
 if __name__ == "__main__":
