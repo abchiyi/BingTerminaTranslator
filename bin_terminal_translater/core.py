@@ -97,11 +97,9 @@ class Translator:
                  language_code: str,
                  text: str = None,
                  split: str = None,
-                 insert: str = None
                  ):
         self.text = text
         self.__split = split
-        self.__insert = insert
 
         if language_code in read_inf(setting.LANGUAGE_CODE_PATH):
             self.language_code = language_code
@@ -118,7 +116,7 @@ class Translator:
 
     def __str__(self):
         if self.text:
-            return self.translator(self.text, self.__split, self.__insert)
+            return self.translator(self.text, self.__split)
         return self.__repr__()
 
     def __repr__(self):
@@ -127,11 +125,10 @@ class Translator:
     def translator(self,
                    text: str = "",
                    split: str = None,
-                   insert: str = None
                    ) -> str:
         if not text.strip():
             raise errors.EmptyTextError(F'无效的字符串:"{text}"')
 
         return translator(
-            text.strip().replace(split or '', insert or ''),
+            ' '.join(text.split(split)),
             self.language_code)

@@ -17,13 +17,6 @@ class Entrance(unittest.TestCase):
     def setUp(self):
         self.argv = ["-l", "zh-Hans Hello world"]
 
-    def test_parser(self):
-        print(core.parser(self.argv))
-
-    def test_entrance(self):
-        """测试入口"""
-        print(entrance(self.argv))
-
     def test_can_copy_it(self):
         """测试是否能正确读写剪贴板"""
         or_text = 'hello copy program'
@@ -38,6 +31,13 @@ class Entrance(unittest.TestCase):
         # 语言代码验证功能，指出不支持该语言代码
         text = '不受支持的目标语言，你可以尝试更新语言代码'
         self.assertEqual(text, entrance(['-l sssssssss']))
+
+    def test_split_string(self):
+        text = ['hello', 'world']
+        self.assertEqual(
+            entrance(['-l', 'en ' + '_'.join(text), '-s_']),
+            ' '.join(text)
+        )
 
 
 class Translate(unittest.TestCase):
@@ -83,25 +83,23 @@ class Translate(unittest.TestCase):
         字符串包含翻译引擎无法识别的字符时,指定分割符,
         以及确保对象方法的参数有效
         """
-        texts = [self.faker_data.color_name() for i in range(5)]
-        text = ' '.join(texts)
+        text = ' '.join([self.faker_data.color_name() for i in range(5)])
         self.assertEqual(
             text,
             str(
                 core.Translator(
                     'en',
                     text.replace(' ', '_'),
-                    '_',
-                    ' '
+                    '_'
                 )
             )
         )
 
         text = text.replace(' ', '_')
-        translater = core.Translator('en', text, '_', ' ')
+        translater = core.Translator('en', text, '_')
         self.assertNotEqual(
             translater,
-            translater.translator(text, '', '')
+            translater.translator(text, ' ')
         )
 
     def test_empty_text_error(self):

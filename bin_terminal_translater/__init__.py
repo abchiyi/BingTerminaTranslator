@@ -12,7 +12,13 @@ def entrance(argv: list):
         tgt_lang, *r_text = name_spece.language.split()
         long_text = ' '.join(r_text) if r_text else paste()
         try:
-            text = str(Translator(tgt_lang, long_text))
+            text = str(
+                Translator(
+                    tgt_lang,
+                    long_text,
+                    name_spece.split
+                )
+            )
         except errors.EmptyTextError:
             return "空文本"
         except errors.TargetLanguageNotSupported:
