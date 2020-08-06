@@ -1,4 +1,4 @@
-import optparse
+import argparse
 import os
 from configparser import ConfigParser, NoSectionError
 from typing import Tuple, List, Any, Dict
@@ -46,16 +46,16 @@ def save_ini(path: str, data_table: Dict[str, Dict[str, str]]):
         c_p.write(file)
 
 
-def parser(argv: list) -> Tuple[Any, List[str]]:
+def parser(argv: list) -> argparse.Namespace:
     parser_conf = read_inf(setting.CONF_PARSER)
 
-    o_p = optparse.OptionParser()
+    a_p = argparse.ArgumentParser()
     for option in parser_conf.keys():
-        o_p.add_option(
+        a_p.add_argument(
             *(F'-{option[0]}', F'--{option}'),
             **parser_conf[option]
         )
-    return o_p.parse_args(argv)
+    return a_p.parse_args(argv)
 
 
 def translator(text: str, language_code: str = '') -> str:
