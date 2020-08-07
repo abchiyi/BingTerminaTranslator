@@ -3,6 +3,7 @@ import os
 from configparser import ConfigParser, NoSectionError
 from typing import Tuple, List, Any, Dict
 
+import copy
 import bs4
 import requests
 
@@ -58,19 +59,19 @@ def parser(argv: list) -> argparse.Namespace:
     return a_p.parse_args(argv)
 
 
-def translator(text: str, language_code: str = '') -> str:
-    conf = read_inf(setting.CONF_PATH)
-    conf['data']['text'] = text
-    # url 数据结构问题 “url” 需要单独提取
-    url = conf.pop('server').pop('translation_engine')
-    if language_code:
-        conf['data']['to'] = language_code
-    response = requests.post(url, **conf)
-    try:
-        # FIXME 固定读取路径，可能引发错误
-        return response.json()[0]['translations'][0]['text']
-    except KeyError as error:
-        raise KeyError(F'KEY:{str(error)} not found in {response.json()}')
+# def translator(text: str, language_code: str = '') -> str:
+#     conf = read_inf(setting.CONF_PATH)
+#     conf['data']['text'] = text
+#     # url 数据结构问题 “url” 需要单独提取
+#     url = conf.pop('server').pop('translation_engine')
+#     if language_code:
+#         conf['data']['to'] = language_code
+#     response = requests.post(url, **conf)
+#     try:
+#         # FIXME 固定读取路径，可能引发错误
+#         return response.json()[0]['translations'][0]['text']
+#     except KeyError as error:
+#         raise KeyError(F'KEY:{str(error)} not found in {response.json()}')
 
 
 def update_language_code():
@@ -100,7 +101,10 @@ class Translator:
                  ):
         self.text = text
         self.__split = split
+        # 读取请求配置
+        self.__conf__ = read_inf(setting.CONF_PATH)
 
+        # FIXME 不应该在创建时对象时抛出的错误
         if language_code in read_inf(setting.LANGUAGE_CODE_PATH):
             self.language_code = language_code
         else:
@@ -122,6 +126,29 @@ class Translator:
     def __repr__(self):
         return str(F"<Translator {self.language_code}>")
 
+    def __translator__(self, text: str, language_code: str = '') -> str:
+        """翻译api"""
+        def conf_seter():
+            """处理数据模板"""
+            # 深度赋值字典，以解决子对象引用问题
+            conf = copy.deepcopy(self.__conf__)
+            conf['data']['text'] = text
+            # url 数据结构问题 “url” 需要单独提取
+            if language_code:
+                conf['data']['to'] = language_code
+            url = conf.pop('server').pop('translation_engine')
+            conf['url'] = url
+
+            return conf
+
+        # 请求翻译处理
+        response = requests.post(**conf_seter())
+        try:
+            # FIXME 固定读取路径，可能引发错误
+            return response.json()[0]['translations'][0]['text']
+        except KeyError as error:
+            raise KeyError(F'KEY:{str(error)} not found in {response.json()}')
+
     def translator(self,
                    text: str = "",
                    split: str = None,
@@ -129,6 +156,6 @@ class Translator:
         if not text.strip():
             raise errors.EmptyTextError(F'无效的字符串:"{text}"')
 
-        return translator(
+        return self.__translator__(
             ' '.join(text.split(split)),
             self.language_code)
