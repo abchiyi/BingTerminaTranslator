@@ -1,7 +1,6 @@
-import argparse
 import os
 from configparser import ConfigParser, NoSectionError
-from typing import Tuple, List, Any, Dict
+from typing import Dict
 
 import copy
 import bs4
@@ -47,18 +46,6 @@ def save_ini(path: str, data_table: Dict[str, Dict[str, str]]):
         c_p.write(file)
 
 
-def parser(argv: list) -> argparse.Namespace:
-    parser_conf = read_inf(setting.CONF_PARSER)
-
-    a_p = argparse.ArgumentParser()
-    for option in parser_conf.keys():
-        a_p.add_argument(
-            *(F'-{option[0]}', F'--{option}'),
-            **parser_conf[option]
-        )
-    return a_p.parse_args(argv)
-
-
 def update_language_code():
     """语言代码更新"""
     # 读取配置
@@ -73,7 +60,6 @@ def update_language_code():
     data = {i.attrs['value']: {'text': i.text} for i in tgt_all_lang}
     save_ini(setting.LANGUAGE_CODE_PATH, data)
     return data
-    # 保存
 
 
 class TextSeter:

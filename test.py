@@ -6,8 +6,8 @@ from typing import List
 import requests
 from faker import Faker
 from pyperclip import copy, paste
-
-from bin_terminal_translater import core, setting, entrance
+from bin import entrance
+from bin_terminal_translater import core, setting
 from bin_terminal_translater.public import errors
 
 
@@ -15,7 +15,7 @@ class Entrance(unittest.TestCase):
     """old test"""
 
     def setUp(self):
-        self.argv = ["-l", "zh-Hans Hello world"]
+        self.argv = ["zh-Hans Hello world"]
 
     def test_can_copy_it(self):
         """测试是否能正确读写剪贴板"""
@@ -23,19 +23,14 @@ class Entrance(unittest.TestCase):
         # 向剪贴板写入待读取文本
         copy(or_text)
         # 从剪贴板读取,并将结果写回剪贴板
-        entrance('-l zh-Hans -c '.split())
+        entrance('zh-Hans -c'.split())
         # 清空剪贴板
         self.assertNotEqual(paste(), or_text)
-
-    def test_not_support_language_code(self):
-        # 语言代码验证功能，指出不支持该语言代码
-        text = '不受支持的目标语言，你可以尝试更新语言代码'
-        self.assertEqual(text, entrance(['-l sssssssss']))
 
     def test_split_string(self):
         text = ['hello', 'world']
         self.assertEqual(
-            entrance(['-l', 'en ' + '_'.join(text), '-s_']),
+            entrance(['en ', '_'.join(text), '-s_']),
             ' '.join(text)
         )
 
@@ -200,12 +195,10 @@ class Core(unittest.TestCase):
                         F"Not Found FIle of Fir :{setting.BASE_DIR_INSIDE}")
         self.assertTrue(os.path.exists(setting.CONF_PATH),
                         F'Not Found File or Dir :{setting.CONF_PATH}')
-        self.assertTrue(os.path.exists(setting.CONF_PARSER),
-                        F'Not Found File or Dir :{setting.CONF_PARSER}')
 
     def test_read_inf(self):
-        self.assertEqual(type(core.read_inf(setting.CONF_PARSER)), dict)
         self.assertEqual(type(core.read_inf(setting.CONF_PATH)), dict)
+        self.assertEqual(type(core.read_inf(setting.LANGUAGE_CODE_PATH)), dict)
 
     def test_can_save_setting(self):
         path = self.test_ini_path
