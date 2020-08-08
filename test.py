@@ -56,7 +56,7 @@ class Translate(unittest.TestCase):
         with core.Translator(tgt_lang=tgt_lang) as translator:
             for text in [self.faker_data.color_name() for i in range(2)]:
                 self.assertTrue(
-                    isinstance(translator.translator(text), str)
+                    isinstance(translator.translator(text).text(), str)
                 )
                 time.sleep(0.5)
 
@@ -79,23 +79,17 @@ class Translate(unittest.TestCase):
         字符串包含翻译引擎无法识别的字符时,指定分割符,
         以及确保对象方法的参数有效
         """
-        text = ' '.join([self.faker_data.color_name() for i in range(5)])
+        texts = [self.faker_data.color_name() for i in range(5)]
+        t_text = core.Translator('en', '_'.join(texts), '_')
         self.assertEqual(
-            text,
-            str(
-                core.Translator(
-                    'en',
-                    text.replace(' ', '_'),
-                    '_'
-                )
-            )
+            str(t_text),
+            ' '.join(texts)
         )
 
-        text = text.replace(' ', '_')
-        translater = core.Translator('en', text, '_')
-        self.assertNotEqual(
-            translater,
-            translater.translator(text, ' ')
+        # 在初始化对象时设置了排除字符，其在翻译方法中依然有效
+        self.assertEqual(
+            t_text.translator('_'.join(texts)).text(),
+            ' '.join(texts)
         )
 
     def test_empty_text_error(self):
@@ -120,6 +114,23 @@ class Translate(unittest.TestCase):
                 pass
             else:
                 self.fail("未捕获到应该出现的错误")
+
+    def test_json(self):
+        """测试json方法是否有效"""
+        data = core.Translator('zh-Hans', 'Hello')
+
+        # 调用"Translator"对象的'json'方法
+        self.assertTrue(
+            isinstance(data.json(), List),
+            data.json()
+        )
+
+        # 在翻译方法中调用'json'方法
+        data = data.translator('hello').json()
+        self.assertTrue(
+            isinstance(data, List),
+            data
+        )
 
 
 class ErrorsTest(unittest.TestCase):

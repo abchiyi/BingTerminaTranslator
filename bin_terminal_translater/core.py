@@ -76,6 +76,26 @@ def update_language_code():
     # 保存
 
 
+class TextSeter:
+
+    def __init__(self, response_obj: requests.Response):
+        self.response = response_obj
+
+    def __repr__(self):
+        return self.text()
+
+    def json(self):
+        return self.response.json()
+
+    def text(self):
+        texts = []
+        for item in self.response.json():
+            for text_item in item['translations']:
+                texts.append(text_item['text'])
+
+        return ' '.join(texts)
+
+
 class Translator:
     """必应翻译"""
 
@@ -92,10 +112,9 @@ class Translator:
                 raise errors.TargetLanguageNotSupported(
                     F"不支持的语言:{tgt_lang}"
                 )
-            # 读取请求配置
-
             return conf
         self.text = text
+        self.response_type = '---'
         self.__split = split
         self.__conf__ = conf_seter()
 
@@ -105,33 +124,48 @@ class Translator:
     def __exit__(self, exc_type, exc_val, exc_tb):
         pass
 
-    def __str__(self, text=None, tgt_lang=None):
+    def __str__(self):
         if self.text:
-            return self.translator(self.text or text, self.__split)
+            return str(self.translator(self.text, self.__split))
         return self.__repr__()
 
     def __repr__(self):
-        return str(F"<Translator {self.__conf__['data']['to']}>")
+        return str(
+            F"<Translator {self.__conf__['data']['to']}-{self.response_type}>"
+        )
 
-    def __translator__(self, text: str) -> str:
+    def __translator__(self, text: str) -> TextSeter:
         """翻译api"""
         conf = copy.deepcopy(self.__conf__)
         conf['data']['text'] = text
+
         # 请求翻译处理
         response = requests.post(**conf)
-        try:
-            # FIXME 固定读取路径，可能引发错误
-            return response.json()[0]['translations'][0]['text']
-        except KeyError as error:
-            raise KeyError(F'KEY:{str(error)} not found in {response.json()}')
+        self.response_type = response.status_code
+        return TextSeter(response)
 
-    def translator(self, text: str = "", split: str = None,) -> str:
+        # json_data = response.json()
+        # if json:
+        #     return json_data
+
+        # texts = []
+        # for item in json_data:
+        #     for text_item in item['translations']:
+        #         texts.append(text_item['text'])
+
+        # return ' '.join(texts)
+
+    def translator(self,
+                   text: str = "",
+                   split: str = None,
+                   ) -> str:
         """翻译方法"""
         if text.strip():
             return self.__translator__(
-                ' '.join(text.strip().split(split)),
+                ' '.join(text.strip().split(split or self.__split)),
             )
         raise errors.EmptyTextError(F'无效的字符串:"{text}"')
 
     def json(self):
         """返回字典"""
+        return self.translator(self.text, self.__split).json()
