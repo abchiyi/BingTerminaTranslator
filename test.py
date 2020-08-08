@@ -52,8 +52,8 @@ class Translate(unittest.TestCase):
         pass
 
     def test_translator_with(self):
-        language_code = 'zh-Hans'
-        with core.Translator(language_code=language_code) as translator:
+        tgt_lang = 'zh-Hans'
+        with core.Translator(tgt_lang=tgt_lang) as translator:
             for text in [self.faker_data.color_name() for i in range(2)]:
                 self.assertTrue(
                     isinstance(translator.translator(text), str)
@@ -63,7 +63,7 @@ class Translate(unittest.TestCase):
     def test_not_support_error(self):
         """在给出不受支持的目标语言代码时抛出错误"""
         try:
-            core.Translator(language_code='ssssssss')
+            core.Translator(tgt_lang='ssssssss')
         except errors.TargetLanguageNotSupported:
             pass
         else:
@@ -103,7 +103,7 @@ class Translate(unittest.TestCase):
         try:
             print(
                 core.Translator(
-                    language_code=self.default_language
+                    tgt_lang=self.default_language
                 ).translator('  '))
         except errors.EmptyTextError:
             pass

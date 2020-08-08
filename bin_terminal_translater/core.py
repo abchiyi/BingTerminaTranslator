@@ -59,21 +59,6 @@ def parser(argv: list) -> argparse.Namespace:
     return a_p.parse_args(argv)
 
 
-# def translator(text: str, language_code: str = '') -> str:
-#     conf = read_inf(setting.CONF_PATH)
-#     conf['data']['text'] = text
-#     # url 数据结构问题 “url” 需要单独提取
-#     url = conf.pop('server').pop('translation_engine')
-#     if language_code:
-#         conf['data']['to'] = language_code
-#     response = requests.post(url, **conf)
-#     try:
-#         # FIXME 固定读取路径，可能引发错误
-#         return response.json()[0]['translations'][0]['text']
-#     except KeyError as error:
-#         raise KeyError(F'KEY:{str(error)} not found in {response.json()}')
-
-
 def update_language_code():
     """语言代码更新"""
     # 读取配置
@@ -94,23 +79,25 @@ def update_language_code():
 class Translator:
     """必应翻译"""
 
-    def __init__(self,
-                 language_code: str,
-                 text: str = None,
-                 split: str = None,
-                 ):
+    def __init__(self, tgt_lang: str, text: str = None, split: str = None,):
+        def conf_seter():
+            """处理数据模板"""
+            # 读取配置
+            conf = read_inf(setting.CONF_PATH)
+            # 提取翻译接口地址
+            conf['url'] = conf.pop('server').pop('translation_engine')
+            if tgt_lang in read_inf(setting.LANGUAGE_CODE_PATH):
+                conf['data']['to'] = tgt_lang
+            else:
+                raise errors.TargetLanguageNotSupported(
+                    F"不支持的语言:{tgt_lang}"
+                )
+            # 读取请求配置
+
+            return conf
         self.text = text
         self.__split = split
-        # 读取请求配置
-        self.__conf__ = read_inf(setting.CONF_PATH)
-
-        # FIXME 不应该在创建时对象时抛出的错误
-        if language_code in read_inf(setting.LANGUAGE_CODE_PATH):
-            self.language_code = language_code
-        else:
-            raise errors.TargetLanguageNotSupported(
-                F"不支持的语言:{language_code}"
-            )
+        self.__conf__ = conf_seter()
 
     def __enter__(self):
         return self
@@ -118,44 +105,33 @@ class Translator:
     def __exit__(self, exc_type, exc_val, exc_tb):
         pass
 
-    def __str__(self):
+    def __str__(self, text=None, tgt_lang=None):
         if self.text:
-            return self.translator(self.text, self.__split)
+            return self.translator(self.text or text, self.__split)
         return self.__repr__()
 
     def __repr__(self):
-        return str(F"<Translator {self.language_code}>")
+        return str(F"<Translator {self.__conf__['data']['to']}>")
 
-    def __translator__(self, text: str, language_code: str = '') -> str:
+    def __translator__(self, text: str) -> str:
         """翻译api"""
-        def conf_seter():
-            """处理数据模板"""
-            # 深度赋值字典，以解决子对象引用问题
-            conf = copy.deepcopy(self.__conf__)
-            conf['data']['text'] = text
-            # url 数据结构问题 “url” 需要单独提取
-            if language_code:
-                conf['data']['to'] = language_code
-            url = conf.pop('server').pop('translation_engine')
-            conf['url'] = url
-
-            return conf
-
+        conf = copy.deepcopy(self.__conf__)
+        conf['data']['text'] = text
         # 请求翻译处理
-        response = requests.post(**conf_seter())
+        response = requests.post(**conf)
         try:
             # FIXME 固定读取路径，可能引发错误
             return response.json()[0]['translations'][0]['text']
         except KeyError as error:
             raise KeyError(F'KEY:{str(error)} not found in {response.json()}')
 
-    def translator(self,
-                   text: str = "",
-                   split: str = None,
-                   ) -> str:
-        if not text.strip():
-            raise errors.EmptyTextError(F'无效的字符串:"{text}"')
+    def translator(self, text: str = "", split: str = None,) -> str:
+        """翻译方法"""
+        if text.strip():
+            return self.__translator__(
+                ' '.join(text.strip().split(split)),
+            )
+        raise errors.EmptyTextError(F'无效的字符串:"{text}"')
 
-        return self.__translator__(
-            ' '.join(text.split(split)),
-            self.language_code)
+    def json(self):
+        """返回字典"""
