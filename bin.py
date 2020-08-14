@@ -15,7 +15,7 @@ def parser(args) -> argparse.Namespace:
                      help='Copy to the clipboard')
     a_p.add_argument('-d', '--debug', action='store_true',
                      help='DeBug Mode')
-    a_p.add_argument('-s', '--split',
+    a_p.add_argument('-s', '--split', nargs='*',
                      help='Specifies the text split character')
 
     return a_p.parse_args(args)

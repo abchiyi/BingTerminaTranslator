@@ -30,7 +30,7 @@ class Entrance(unittest.TestCase):
     def test_split_string(self):
         text = ['hello', 'world']
         self.assertEqual(
-            entrance(['en ', '_'.join(text), '-s_']),
+            entrance(['en ', '><'.join(text), '-s', '> ', ' <']),
             ' '.join(text)
         )
 

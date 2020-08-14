@@ -129,14 +129,17 @@ class Translator:
         self.response_type = response.status_code
         return TextSeter(response)
 
-    def __sequence_str__(self, value):
-        if isinstance(value, (list, tuple)):
-            for va in value:
-                if va not in self.__split:
-                    self.__split += list(value)
-        else:
-            if value not in self.__split:
-                self.__split.append(value)
+    def __sequence_str__(self, values):
+        if values:
+            values = [value.strip() for value in values]
+
+            if isinstance(values, (list, tuple)):
+                for value in values:
+                    if value not in self.__split:
+                        self.__split += list(value)
+            else:
+                if values not in self.__split:
+                    self.__split.append(value)
 
     def translator(self,
                    text: str = "",
@@ -147,12 +150,13 @@ class Translator:
             value_f = ' '.join(value.strip().split(srt.pop(0)))
             if srt:
                 return rep_str(value_f, srt)
-            return value_f
+            return ' '.join(value_f.split())
 
         self.__sequence_str__(split)
 
         if text.strip():
-            return self.__translator__(rep_str(text, self.__split.copy()))
+            return self.__translator__(
+                rep_str(text, self.__split.copy()) if self.__split else text)
 
         raise errors.EmptyTextError(F'无效的字符串:"{text}"')
 
