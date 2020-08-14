@@ -1,13 +1,11 @@
+from bin_terminal_translater.public import errors
+from bin_terminal_translater import setting
+import requests
+import bs4
+import copy
 import os
 from configparser import ConfigParser, NoSectionError
 from typing import Dict
-
-import copy
-import bs4
-import requests
-
-from bin_terminal_translater import setting
-from bin_terminal_translater.public import errors
 
 
 def file_check(func):
@@ -129,17 +127,6 @@ class Translator:
         response = requests.post(**conf)
         self.response_type = response.status_code
         return TextSeter(response)
-
-        # json_data = response.json()
-        # if json:
-        #     return json_data
-
-        # texts = []
-        # for item in json_data:
-        #     for text_item in item['translations']:
-        #         texts.append(text_item['text'])
-
-        # return ' '.join(texts)
 
     def translator(self,
                    text: str = "",
