@@ -134,7 +134,6 @@ class ErrorsTest(unittest.TestCase):
         """配置文件读函数在找不到文件时抛出错误"""
         try:
             path = './sr.ini'
-            os.system(F'del {path}')
             core.read_inf(path)
         except errors.FileError:
             pass
