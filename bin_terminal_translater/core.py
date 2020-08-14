@@ -99,7 +99,8 @@ class Translator:
             return conf
         self.text = text
         self.response_type = '---'
-        self.__split = split
+        self.__split = []
+        self.__sequence_str__(split)
         self.__conf__ = conf_seter()
 
     def __enter__(self):
@@ -128,15 +129,31 @@ class Translator:
         self.response_type = response.status_code
         return TextSeter(response)
 
+    def __sequence_str__(self, value):
+        if isinstance(value, (list, tuple)):
+            for va in value:
+                if va not in self.__split:
+                    self.__split += list(value)
+        else:
+            if value not in self.__split:
+                self.__split.append(value)
+
     def translator(self,
                    text: str = "",
                    split: str = None,
                    ) -> str:
         """翻译方法"""
+        def rep_str(value: str, srt: list) -> str:
+            value_f = ' '.join(value.strip().split(srt.pop(0)))
+            if srt:
+                return rep_str(value_f, srt)
+            return value_f
+
+        self.__sequence_str__(split)
+
         if text.strip():
-            return self.__translator__(
-                ' '.join(text.strip().split(split or self.__split)),
-            )
+            return self.__translator__(rep_str(text, self.__split.copy()))
+
         raise errors.EmptyTextError(F'无效的字符串:"{text}"')
 
     def json(self):

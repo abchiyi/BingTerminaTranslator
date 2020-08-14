@@ -75,6 +75,8 @@ class Translate(unittest.TestCase):
         以及确保对象方法的参数有效
         """
         texts = [self.faker_data.color_name() for i in range(5)]
+
+        # 分割参数接受字符串
         t_text = core.Translator('en', '_'.join(texts), '_')
         self.assertEqual(
             str(t_text),
@@ -84,6 +86,17 @@ class Translate(unittest.TestCase):
         # 在初始化对象时设置了排除字符，其在翻译方法中依然有效
         self.assertEqual(
             t_text.translator('_'.join(texts)).text(),
+            ' '.join(texts)
+        )
+
+        t_text = core.Translator('en', '_'.join(texts), '_')
+
+        # 分割参数接受一个序列
+        self.assertEqual(
+            t_text.translator(
+                '><'.join(texts),
+                split=('>', '<')
+            ).text(),
             ' '.join(texts)
         )
 
