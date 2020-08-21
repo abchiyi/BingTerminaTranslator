@@ -17,6 +17,8 @@ def parser(args) -> argparse.Namespace:
                      help='DeBug Mode')
     a_p.add_argument('-s', '--split', nargs='*',
                      help='Specifies the text split character')
+    a_p.add_argument('-l', '--list_all_ltgt', action='store_true',
+                     help='List all languages')
 
     return a_p.parse_args(args)
 
@@ -37,12 +39,28 @@ def entrance(argv: list):
             )
         except public.errors.EmptyTextError:
             return "待翻译文本为空!"
-        # except public.errors.TargetLanguageNotSupported:
-        #     return "不受支持的目标语言，你可以尝试更新语言代码"
+
         if name_spece.copy:
             copy(text)
         return text
 
+    def all_tgt():
+        temp = []
+        all_l_tgt = core.read_inf(core.setting.LANGUAGE_CODE_PATH)
+        for item_key in all_l_tgt.keys():
+            i18_tgt = core.Translator(
+                name_spece.tgt_lang.strip(),
+                all_l_tgt[item_key]['text']
+            )
+            temp.append(F"language tgt:[{item_key}] {i18_tgt}\n")
+
+        return ''.join(temp)
+
+    # 列出所有语言标签
+    if name_spece.list_all_ltgt:
+        return all_tgt()
+
+    # 翻译给出的文本
     try:
         return f_translator()
     except public.errors.TargetLanguageNotSupported:
