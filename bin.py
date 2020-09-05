@@ -2,21 +2,28 @@ from bin_terminal_translater import core, public
 from pyperclip import paste, copy
 
 import argparse
+import tqdm
 import os
 
 
 def parser(args) -> argparse.Namespace:
     a_p = argparse.ArgumentParser()
-    # 位置参数
+    # 位置参数 #
+    # 语言类型
     a_p.add_argument('tgt_lang', help='Target tgt_lang')
+    # 文本，接受多个参数
     a_p.add_argument('text', nargs='*', default=None, help='some texts')
-    # 可选参数
+    # 可选参数 #
+    # 复制输出内容
     a_p.add_argument('-c', '--copy', action='store_true',
                      help='Copy to the clipboard')
+    # de bug 模式
     a_p.add_argument('-d', '--debug', action='store_true',
                      help='DeBug Mode')
+    # 移除指定字符串， 接受多个参数
     a_p.add_argument('-s', '--split', nargs='*',
                      help='Specifies the text split character')
+    # 以当前指定语言模式列出所有语言标签
     a_p.add_argument('-l', '--list_all_ltgt', action='store_true',
                      help='List all languages')
 
@@ -45,14 +52,18 @@ def entrance(argv: list):
         return text
 
     def all_tgt():
-        temp = []
         all_l_tgt = core.read_inf(core.setting.LANGUAGE_CODE_PATH)
-        for item_key in all_l_tgt.keys():
+        tqdm_keys = tqdm.tqdm(all_l_tgt.keys())
+        base_language = name_spece.tgt_lang.strip()
+        temp = []
+
+        for key in tqdm_keys:
+            tqdm_keys.set_description(F'{key}>>>>>{base_language}')
             i18_tgt = core.Translator(
-                name_spece.tgt_lang.strip(),
-                all_l_tgt[item_key]['text']
+                base_language,
+                all_l_tgt[key]['text']
             )
-            temp.append(F"language tgt:[{item_key}] {i18_tgt}\n")
+            temp.append(F"language tgt:[{key}] {i18_tgt}\n")
 
         return ''.join(temp)
 
