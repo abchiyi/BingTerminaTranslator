@@ -56,11 +56,11 @@
 
 ##### 手动安装
 
-暂时么得，也许你可以参考下Windows的安装方法
+暂时么得，也许你可以参考下Windows的安装方法是🤔
 
 ###### 源码安装
 
-暂时么得，也许你可以参考下Windows的安装方法
+暂时么得，也许你可以参考下Windows的安装方法是🤔
 
 ###### 至此 Linux 下的源码安装到此结束
 
@@ -86,12 +86,12 @@
 
 ##### 选项 -l --list_all_lgtg
 该选项用于展示所有支持的语言及其语言码用法如下,该选项支持i8n,将自动转换码表语言至指定语言。但目前不支持存储，每次调用时需要等候转换
+
     bin zh-Hans -l
-
-<video src="/media/vedio/tgt_loading_zh.mp4" width="1920px" height="1080px" controls="controls"></video>
-
----
+![tgt loading](/media/gif/tgt_loading_zh.gif "转换至码表解释至目标语言")
 
 [1]:https://gitee.com/abchiyi/BinTerminaTranslator/releases
+
+---
 
 20/9/6 by Meme
