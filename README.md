@@ -19,34 +19,34 @@
 
 ###### 脚本安装
 
-解压压缩包到独立文件夹内，执行内部的install.ps1脚本即可
+下载最新的Windows发行版，该版本以打包运行环境无需配置运行环境。
+解压并右键执行“indtall.ps1”脚本即可
 
-###### 源码安装 !!!**源码运行仅支持Python3.6或更高版本**!!!
+###### 手动安装
 
-安装时你可以选定是否需要打包为 .exe 程序。
-首先确定运行环境,开启任意终端,切换到源码目录。执行该命令安装所需支持包
+!!!**源码运行仅支持Python3.6或更高版本**!!!
+
+首先你需要确保安装 python3.6 或更高版本，python系统变量名为“python”
+
+    $prg = $HOME + '\bin_terminal_translator'
+    git clone https://gitee.com/abchiyi/BinTerminaTranslator $prg
+    cd $prg
+
+现在安装所需的运行库
 
     python -m pip install -r .\packges
 
-打包执行文件。如不需要打包为 .exe 即可[点击此处]跳转至下一节
+现在你已经有了一个能够执行的环境了，只需将其配置到系统环境即可
 
-    pyinstaller.exe -D .\bin.py
-
-复制配置文件
-
-    Copy-Item .\ini\* .\dist\bin\ini\
-
-复制文件至用户目录下,依次执行以下命令
-
-    1. $prg = $HOME + '\bin_terminal_translator'
-    2. $loc = (Get-Location).Path
-    3. Copy-Item $loc $prg -Recurse
+    cp .\bin.py .\co.py
+    del .\bin.py
+    echo "python co.py $args" >> .\bin.ps1
 
 最后将目录添加至用户环境变量
 
     [System.Environment]::SetEnvironmentVariable("path", $env:Path + ';' + $prg + '\', "User")
 
-###### 至此 Windows 下的源码安装到此结束
+###### 至此 Windows 下安装结束
 
 ---
 
