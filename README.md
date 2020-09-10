@@ -15,12 +15,13 @@
 
 ### 安装教程
 
-#### ![Gi](/media/SVG/windows.svg "Windwos") <font color='blue'>Windwos 安装配置</font>
+#### ![Gitee](/media/SVG/windows.svg "Windwos") <font color='blue'>Windwos 安装配置</font>
 
 ###### 脚本安装
 
-下载最新的Windows发行版，该版本以打包运行环境无需配置运行环境。
-解压并右键执行“indtall.ps1”脚本即可
+下载最新的Windows发行版，该版本以打包运行环境无需配置运行环境。解压并右键执行“indtall.ps1”脚本即可。
+异或者克隆最新仓库，执行“packeg_for_windws.ps1”来打包最新的版本，当然你需要确保运行环境正常，打包完毕将在桌面生成安装包，其版本号将沿用最新版本号
+
 
 ###### 手动安装
 
@@ -40,7 +41,7 @@
 
     cp .\bin.py .\co.py
     del .\bin.py
-    echo "python co.py $args" >> .\bin.ps1
+    echo "python $prg\co.py `$args" > .\bin.ps1
 
 最后将目录添加至用户环境变量
 
@@ -88,6 +89,7 @@
 该选项用于展示所有支持的语言及其语言码用法如下,该选项支持i8n,将自动转换码表语言至指定语言。但目前不支持存储，每次调用时需要等候转换
 
     bin zh-Hans -l
+
 ![tgt loading](/media/gif/tgt_loading_zh.gif "转换至码表解释至目标语言")
 
 [1]:https://gitee.com/abchiyi/BinTerminaTranslator/releases
