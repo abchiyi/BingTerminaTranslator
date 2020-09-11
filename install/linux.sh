@@ -17,7 +17,7 @@ if (($?!=0)); then
     echo 没有pip包管理器,请为 $python_path 下的python安装pip包管理器
     exit 1
 fi
-$python_path -m pip install -r $prg_path/packges
+$python_path -m pip install -r $prg_path/install/packegs_of_linux
 if (($?!=0)); then
     echo $?
     exit 1
