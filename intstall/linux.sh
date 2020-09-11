@@ -22,13 +22,9 @@ if (($?!=0)); then
     echo $?
     exit 1
 fi
-cp $prg_path/bin.py $prg_path/co.py;rm -rf $prg_path/bin.py
+mv $prg_path/bin.py $prg_path/co.py
 
-
-echo "#!$python_path" >> $prg_path/bin.py
-cat $prg_path/co.py | while read line
-do
-echo $line >> $prg_path/bin.py
-done
-chmod 700 $prg_path/bin.py
+echo $(which bash) >> $prg_path/bin.sh
+echo $python_path $prg_path '$agrs' >> $prg_path/bin.sh
+chmod 700 $prg_path/bin.sh
 exit 0
