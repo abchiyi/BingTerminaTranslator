@@ -53,7 +53,7 @@
 
     prg=~/.bin_terminal_translator
     git clone https://gitee.com/abchiyi/BinTerminaTranslator $prg;cd $prg
-    bash ./install/linus.sh
+    bash ./install/linux.sh
 
 ##### zsh
 
