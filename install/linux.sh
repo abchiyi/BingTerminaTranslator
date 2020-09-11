@@ -24,7 +24,7 @@ if (($?!=0)); then
 fi
 mv $prg_path/bin.py $prg_path/co.py
 
-echo $(which bash) >> $prg_path/bin.sh
+echo "#!$(which bash)" >> $prg_path/bin.sh
 echo $python_path "$prg_path/co.py \$agrs" >> $prg_path/bin.sh
 chmod 700 $prg_path/bin.sh
 exit 0
