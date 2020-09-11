@@ -57,12 +57,12 @@
 
 ##### zsh
 
-    echo 'alias bin="~/bin_terminal_translator/bin.py"' >> ~/.zshrc
+    echo 'alias bin="~/bin_terminal_translator/bin.sh"' >> ~/.zshrc
     touch  ~/.zshrc
 
 ##### bashrc
 
-    echo 'alias bin="~/bin_terminal_translator/bin.py"' >> ~/.bashrc
+    echo 'alias bin="~/bin_terminal_translator/bin.sh"' >> ~/.bashrc
     touch  ~/.bashrc
 
 ###### 至此 Linux 下的源码安装到此结束
@@ -95,7 +95,3 @@
 ![tgt loading](/media/gif/tgt_loading_zh.gif "转换至码表解释至目标语言")
 
 [1]:https://gitee.com/abchiyi/BinTerminaTranslator/releases
-
----
-
-20/9/6 by Meme
