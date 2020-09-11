@@ -30,8 +30,7 @@
 首先你需要确保安装 python3.6 或更高版本，python系统变量名为“python”
 
     $prg = $HOME + '\bin_terminal_translator'
-    git clone https://gitee.com/abchiyi/BinTerminaTranslator $prg
-    cd $prg
+    git clone https://gitee.com/abchiyi/BinTerminaTranslator $prg;cd $prg
 
 现在安装所需的运行库
 
@@ -39,8 +38,7 @@
 
 现在你已经有了一个能够执行的环境了，只需将其配置到系统环境即可
 
-    cp .\bin.py .\co.py
-    del .\bin.py
+    cp .\bin.py .\co.py;del .\bin.py
     echo "python $prg\co.py `$args" > .\bin.ps1
 
 最后将目录添加至用户环境变量
@@ -53,15 +51,19 @@
 
 #### ![linux](/media/SVG/linux.svg "Linux") <font color='Yellow'>Linux安装配置</font>
 
-暂时么得
+    prg=~/bin_terminal_translator
+    git clone https://gitee.com/abchiyi/BinTerminaTranslator $prg;cd $prg
+    bash ./install/linus.sh
 
-##### 手动安装
+##### zsh
 
-暂时么得，也许你可以参考下Windows的安装方法是🤔
+    echo 'alias bin="~/bin_terminal_translator/bin.py"' >> ~/.zshrc
+    touch  ~/.zshrc
 
-###### 源码安装
+##### bashrc
 
-暂时么得，也许你可以参考下Windows的安装方法是🤔
+    echo 'alias bin="~/bin_terminal_translator/bin.py"' >> ~/.bashrc
+    touch  ~/.bashrc
 
 ###### 至此 Linux 下的源码安装到此结束
 

@@ -1,0 +1,34 @@
+#!/usr/bin/env bash
+
+python_path=$(which python)
+if (($?!=0));then
+    python_path=$(which python3)
+fi
+
+if (($?!=0)); then
+    echo "未找到'python'运行环境,请确保您的计算机中正确配置了'python'环境"
+    exit 1
+fi
+
+prg_path=~/bin_terminal_translator/
+$python_path -m pip -V
+if (($?!=0)); then
+    echo $?
+    echo 没有pip包管理器,请为 $python_path 下的python安装pip包管理器
+    exit 1
+fi
+$python_path -m pip install -r $prg_path/packges
+if (($?!=0)); then
+    echo $?
+    exit 1
+fi
+cp $prg_path/bin.py $prg_path/co.py;rm -rf $prg_path/bin.py
+
+
+echo "#!$python_path" >> $prg_path/bin.py
+cat $prg_path/co.py | while read line
+do
+echo $line >> $prg_path/bin.py
+done
+chmod 700 $prg_path/bin.py
+exit 0
