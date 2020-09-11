@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-prg_path=~/bin_terminal_translator/
+prg_path=~/.bin_terminal_translator/
 python_path=$(which python)
 if (($?!=0));then
     python_path=$(which python3)

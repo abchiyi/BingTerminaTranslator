@@ -29,7 +29,7 @@
 
 首先你需要确保安装 python3.6 或更高版本，python系统变量名为“python”
 
-    $prg = $HOME + '\bin_terminal_translator'
+    $prg = $HOME + '\.bin_terminal_translator'
     git clone https://gitee.com/abchiyi/BinTerminaTranslator $prg;cd $prg
 
 现在安装所需的运行库
@@ -51,18 +51,18 @@
 
 #### ![linux](/media/SVG/linux.svg "Linux") <font color='Yellow'>Linux安装配置</font>
 
-    prg=~/bin_terminal_translator
+    prg=~/.bin_terminal_translator
     git clone https://gitee.com/abchiyi/BinTerminaTranslator $prg;cd $prg
     bash ./install/linus.sh
 
 ##### zsh
 
-    echo 'alias bin="~/bin_terminal_translator/bin.sh"' >> ~/.zshrc
+    echo 'alias bin="~/.bin_terminal_translator/bin.sh"' >> ~/.zshrc
     touch  ~/.zshrc
 
 ##### bashrc
 
-    echo 'alias bin="~/bin_terminal_translator/bin.sh"' >> ~/.bashrc
+    echo 'alias bin="~/.bin_terminal_translator/bin.sh"' >> ~/.bashrc
     touch  ~/.bashrc
 
 ###### 至此 Linux 下的源码安装到此结束
