@@ -93,9 +93,7 @@ class Translator:
             if tgt_lang in read_inf(setting.LANGUAGE_CODE_PATH):
                 conf['data']['to'] = tgt_lang
             else:
-                raise errors.TargetLanguageNotSupported(
-                    F"不支持的语言:{tgt_lang}"
-                )
+                raise errors.TargetLanguageNotSupported(tgt_lang)
             return conf
         self.text = text
         self.response_type = '---'
