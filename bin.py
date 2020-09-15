@@ -76,8 +76,8 @@ def entrance(argv: list):
         return f_translator()
     except public.errors.TargetLanguageNotSupported:
         # 假设语言标签不存在本地文件中，联网更新，重试
-        core.update_language_code()
         print(F'不受支持的语言:< {name_spece.tgt_lang} >\n正在获取联网支持')
+        core.update_language_code()
         return f_translator()
 
 
