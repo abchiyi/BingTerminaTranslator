@@ -34,14 +34,10 @@
 
 现在安装所需的运行库
 
-    python -m pip install -r .\packges
+    python -m pip install -r .\install\packges_of_windows
+    mv .\bin.py .\co.py;echo "python $prg\co.py `$args" > .\bin.ps1
 
-现在你已经有了一个能够执行的环境了，只需将其配置到系统环境即可
-
-    cp .\bin.py .\co.py;del .\bin.py
-    echo "python $prg\co.py `$args" > .\bin.ps1
-
-最后将目录添加至用户环境变量
+配置到系统环境变量
 
     [System.Environment]::SetEnvironmentVariable("path", $env:Path + ';' + $prg + '\', "User")
 
