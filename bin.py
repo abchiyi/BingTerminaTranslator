@@ -88,8 +88,7 @@ def entrance(argv: list):
 
 
 if __name__ == "__main__":
-    args = os.sys.argv
-    if len(args) < 2:
+    if len(os.sys.argv) < 2:
         entrance(['-h'])
     else:
         print(entrance(os.sys.argv[1:]))
