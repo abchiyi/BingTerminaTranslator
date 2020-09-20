@@ -7,10 +7,13 @@ import os
 
 
 def parser(args) -> argparse.Namespace:
-    a_p = argparse.ArgumentParser()
+    a_p = argparse.ArgumentParser(
+        prog='bin',
+        usage='%(prog)s tgt_lang [text] [optionals]',
+    )
     # 位置参数 #
     # 语言类型
-    a_p.add_argument('tgt_lang', help='Target tgt_lang')
+    a_p.add_argument('tgt_lang', help='Target tgt_lang', default='zh-Hans')
     # 文本，接受多个参数
     a_p.add_argument('text', nargs='*', default=None, help='some texts')
     # 可选参数 #

@@ -7,7 +7,7 @@ import requests
 from faker import Faker
 from pyperclip import copy, paste
 from bin import entrance
-from bin_terminal_translater import core, setting
+from bin_terminal_translater import core, setting, public
 from bin_terminal_translater.public import errors
 
 
@@ -33,6 +33,13 @@ class Entrance(unittest.TestCase):
             entrance(['en ', '><'.join(text), '-s', '> ', ' <']),
             ' '.join(text)
         )
+
+    def test_error_tgt_lang_arg(self):
+        args = ['abc', 'Hello']
+        try:
+            entrance(args)
+        except public.errors.TargetLanguageNotSupported as error:
+            self.fail(error)
 
 
 class Translate(unittest.TestCase):
