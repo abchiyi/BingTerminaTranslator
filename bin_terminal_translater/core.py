@@ -123,13 +123,6 @@ class Translator:
             # FIXME 捕获错误后无动作
             pass
 
-    def __sequence_str__(self, values: [str, list, tuple]) -> list:
-        if values:
-            if isinstance(values, str):
-                return [values.strip()]
-            return [value.strip() for value in values if isinstance(value, str)]
-        return []
-
     def __sematinc__(self, from_language: str, text: str) -> dict:
 
         template = {
@@ -149,17 +142,27 @@ class Translator:
                              for i in response.json()[0]['translations']]
                 }
 
-    def translator(self, text: str = '', split: str = None,) -> TextSeter:
+    def translator(self,
+                   text: str = '',
+                   split: [str, list, tuple] = [],) -> TextSeter:
         """翻译方法"""
 
-        def rep_str(value: str, srt: list) -> str:
-            for i in srt:
-                value = ' '.join(value.replace(i, ' ').split())
-            return value
+        def fromat_text(split, text) -> str:
+            """格式化字符串"""
+            if split:
+                if isinstance(split, str):
+                    split = [split.strip()]
+                else:
+                    split = [value.strip()
+                             for value in split if isinstance(value, str)]
+
+            for i in split:
+                text = ' '.join(text.replace(i, ' ').split())
+            return text
 
         if text.strip():
             conf = copy.deepcopy(self.__conf__)
-            conf['data']['text'] = rep_str(text, self.__sequence_str__(split))
+            conf['data']['text'] = fromat_text(split, text)
 
             # 请求翻译处理
             self.__net_post__(conf)
