@@ -62,41 +62,25 @@ def update_language_code():
 
 class TextSeter:
 
-    def __init__(self, response_obj: requests.Response):
-        self.response = response_obj
+    def __init__(self, tra):
+        self.__tra__ = tra
 
     def __repr__(self):
         return self.text()
 
     def json(self):
-        return self.response.json()
+        return self.__tra__.response.json()
 
     def text(self):
         texts = []
-        for item in self.response.json():
+        for item in self.__tra__.response.json():
             for text_item in item['translations']:
                 texts.append(text_item['text'])
 
         return ' '.join(texts)
 
-    # def semantic(self):
-    #     data = {
-    #         'to': self.__conf__['data']['to'],
-    #         'from': self.json()[0]['detectedLanguage']['language'],
-    #         'text': self.text
-    #     }
-    #     if data['to'] == data['from']:
-    #         raise Exception(F'语言已是:{data["to"]}')
-
-    #     response = requests.post(
-    #         url='https://cn.bing.com/tlookupv3',
-    #         data=data
-    #     )
-
-        # return [
-        #     (i['displayTarget'], i['transliteration'])
-        #     for i in response.json()[0]['translations']
-        # ]
+    def semantic(self):
+        pass
 
 
 class Translator:
@@ -114,9 +98,10 @@ class Translator:
             else:
                 raise errors.TargetLanguageNotSupported(tgt_lang)
             return conf
-        self.response_type = '---'
-        self.__split = []
+        self.from_language = None
+        self.to_language = tgt_lang
         self.__conf__ = conf_seter()
+        self.response = requests.Response()
 
     def __enter__(self):
         return self
@@ -124,15 +109,18 @@ class Translator:
     def __exit__(self, exc_type, exc_val, exc_tb):
         pass
 
-    def __str__(self):
-        if self.text:
-            return str(self.translator(self.text, self.__split))
-        return self.__repr__()
-
     def __repr__(self):
         return str(
-            F"<Translator {self.__conf__['data']['to']}-{self.response_type}>"
+            F"<Translator({self.to_language})>"
         )
+
+    def __net_post__(self, data):
+        try:
+            self.response = requests.post(**data)
+            # FIXME 捕获所有错误
+        except Exception:
+            # FIXME 捕获错误后无动作
+            pass
 
     def __translator__(self, text: str) -> TextSeter:
         """翻译api"""
@@ -140,21 +128,37 @@ class Translator:
         conf['data']['text'] = text
 
         # 请求翻译处理
-        response = requests.post(**conf)
-        self.response_type = response.status_code
-        return TextSeter(response)
+        self.__net_post__(conf)
+        # response = requests.post(**conf)
+        return TextSeter(self)
 
-    def __sequence_str__(self, values):
+    def __sequence_str__(self, values: [str, list, tuple]) -> list:
         if values:
-            values = [value.strip() for value in values]
+            if isinstance(values, str):
+                return [values.strip()]
+            return [value.strip() for value in values if isinstance(value, str)]
+        return []
 
-            if isinstance(values, (list, tuple)):
-                for value in values:
-                    if value not in self.__split:
-                        self.__split += list(value)
-            else:
-                if values not in self.__split:
-                    self.__split.append(value)
+    def __sematinc__(self, text):
+
+        template = {
+            'url': 'https://cn.bing.com/tlookupv3',
+            'data': {
+                'text': text,
+                'to': self.to_language,
+                'from': self.from_language,
+            }
+        }
+
+        # if data['to'] == data['from']:
+        #     raise Exception(F'语言已是:{data["to"]}')
+
+        response = requests.post(**template)
+
+        return [
+            (i['displayTarget'], i['transliteration'])
+            for i in response.json()[0]['translations']
+        ]
 
     def translator(self,
                    text: str = "",
@@ -162,15 +166,15 @@ class Translator:
                    ) -> str:
         """翻译方法"""
         def rep_str(value: str, srt: list) -> str:
-            value_f = ' '.join(value.strip().split(srt.pop(0)))
-            if srt:
-                return rep_str(value_f, srt)
-            return ' '.join(value_f.split())
+            for i in srt:
+                value = ' '.join(value.replace(i, ' ').split())
+            return value
 
         self.__sequence_str__(split)
 
         if text.strip():
             return self.__translator__(
-                rep_str(text, self.__split.copy()) if self.__split else text)
+                rep_str(text, self.__sequence_str__(split))
+            )
 
         raise errors.EmptyTextError(F'无效的字符串:"{text}"')

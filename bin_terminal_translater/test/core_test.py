@@ -74,13 +74,13 @@ class Translate(unittest.TestCase):
             t_text.json()
         )
 
-    # def test_semantic(self):
-    #     text = 'hello'
+    def test_semantic(self):
 
-    #     data = core.Translator('zh-Hans', text).semantic()
-    #     for item in data:
-    #         for i in item:
-    #             self.assertTrue(isinstance(i, str))
+        semantic = self.tar.translator(self.text).semantic()
+
+        for item in semantic:
+            for i in item:
+                self.assertTrue(isinstance(i, str))
 
 
 class UpdateTgtLang(unittest.TestCase):
