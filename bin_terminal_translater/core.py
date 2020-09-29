@@ -144,7 +144,7 @@ class Translator:
 
     def translator(self,
                    text: str = '',
-                   split: [str, list, tuple] = [],) -> TextSeter:
+                   split: [str, list, tuple] = None) -> TextSeter:
         """翻译方法"""
 
         def fromat_text(split, text) -> str:
@@ -152,10 +152,11 @@ class Translator:
             if split:
                 if isinstance(split, str):
                     split = [split.strip()]
-                else:
+                elif isinstance(split, (list, tuple)):
                     split = [value.strip()
                              for value in split if isinstance(value, str)]
-
+                else:
+                    split = []
             for i in split:
                 text = ' '.join(text.replace(i, ' ').split())
             return text
