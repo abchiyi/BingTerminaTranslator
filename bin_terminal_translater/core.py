@@ -63,15 +63,15 @@ def update_language_code():
 class TextSeter:
 
     def __init__(self, tra):
-        self.__tra__ = tra
+        self.__tra__: Translator = tra
 
     def __repr__(self):
         return self.text()
 
-    def json(self):
+    def json(self) -> dict:
         return self.__tra__.response.json()
 
-    def text(self):
+    def text(self) -> str:
         texts = []
         for item in self.__tra__.response.json():
             for text_item in item['translations']:
@@ -79,8 +79,10 @@ class TextSeter:
 
         return ' '.join(texts)
 
-    def semantic(self):
-        pass
+    def semantic(self) -> dict:
+        return self.__tra__.__sematinc__(
+            self.json()[0]['detectedLanguage']['language'], self.text()
+        )
 
 
 class Translator:
@@ -98,8 +100,7 @@ class Translator:
             else:
                 raise errors.TargetLanguageNotSupported(tgt_lang)
             return conf
-        self.from_language = None
-        self.to_language = tgt_lang
+        self.language = tgt_lang
         self.__conf__ = conf_seter()
         self.response = requests.Response()
 
@@ -111,7 +112,7 @@ class Translator:
 
     def __repr__(self):
         return str(
-            F"<Translator({self.to_language})>"
+            F"<Translator({self.language})>"
         )
 
     def __net_post__(self, data):
@@ -122,16 +123,6 @@ class Translator:
             # FIXME 捕获错误后无动作
             pass
 
-    def __translator__(self, text: str) -> TextSeter:
-        """翻译api"""
-        conf = copy.deepcopy(self.__conf__)
-        conf['data']['text'] = text
-
-        # 请求翻译处理
-        self.__net_post__(conf)
-        # response = requests.post(**conf)
-        return TextSeter(self)
-
     def __sequence_str__(self, values: [str, list, tuple]) -> list:
         if values:
             if isinstance(values, str):
@@ -139,14 +130,15 @@ class Translator:
             return [value.strip() for value in values if isinstance(value, str)]
         return []
 
-    def __sematinc__(self, text):
+    def __sematinc__(self, from_language: str, text: str) -> dict:
 
+        # FIXME 执行请求前from的值可能为None
         template = {
             'url': 'https://cn.bing.com/tlookupv3',
             'data': {
                 'text': text,
-                'to': self.to_language,
-                'from': self.from_language,
+                'to': self.language,
+                'from': from_language,
             }
         }
 
@@ -155,26 +147,26 @@ class Translator:
 
         response = requests.post(**template)
 
-        return [
-            (i['displayTarget'], i['transliteration'])
-            for i in response.json()[0]['translations']
-        ]
+        return {'to': self.language,
+                'from': from_language,
+                'semantic': [(i['displayTarget'], i['transliteration'])
+                             for i in response.json()[0]['translations']]
+                }
 
-    def translator(self,
-                   text: str = "",
-                   split: str = None,
-                   ) -> str:
+    def translator(self, text: str = '', split: str = None,) -> TextSeter:
         """翻译方法"""
+
         def rep_str(value: str, srt: list) -> str:
             for i in srt:
                 value = ' '.join(value.replace(i, ' ').split())
             return value
 
-        self.__sequence_str__(split)
-
         if text.strip():
-            return self.__translator__(
-                rep_str(text, self.__sequence_str__(split))
-            )
+            conf = copy.deepcopy(self.__conf__)
+            conf['data']['text'] = rep_str(text, self.__sequence_str__(split))
+
+            # 请求翻译处理
+            self.__net_post__(conf)
+            return TextSeter(self)
 
         raise errors.EmptyTextError(F'无效的字符串:"{text}"')

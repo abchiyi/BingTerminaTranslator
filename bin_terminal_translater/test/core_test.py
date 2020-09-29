@@ -75,10 +75,12 @@ class Translate(unittest.TestCase):
         )
 
     def test_semantic(self):
+        semantic = core.Translator('zh-Hans').translator('Hello').semantic()
 
-        semantic = self.tar.translator(self.text).semantic()
+        if ('to' not in semantic) and ('from' not in semantic):
+            self.fail('没有包含必要的参数')
 
-        for item in semantic:
+        for item in semantic['semantic']:
             for i in item:
                 self.assertTrue(isinstance(i, str))
 
