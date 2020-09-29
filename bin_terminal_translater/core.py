@@ -132,7 +132,6 @@ class Translator:
 
     def __sematinc__(self, from_language: str, text: str) -> dict:
 
-        # FIXME 执行请求前from的值可能为None
         template = {
             'url': 'https://cn.bing.com/tlookupv3',
             'data': {
@@ -141,9 +140,6 @@ class Translator:
                 'from': from_language,
             }
         }
-
-        # if data['to'] == data['from']:
-        #     raise Exception(F'语言已是:{data["to"]}')
 
         response = requests.post(**template)
 
