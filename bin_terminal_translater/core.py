@@ -79,11 +79,30 @@ class TextSeter:
 
         return ' '.join(texts)
 
+    # def semantic(self):
+    #     data = {
+    #         'to': self.__conf__['data']['to'],
+    #         'from': self.json()[0]['detectedLanguage']['language'],
+    #         'text': self.text
+    #     }
+    #     if data['to'] == data['from']:
+    #         raise Exception(F'语言已是:{data["to"]}')
+
+    #     response = requests.post(
+    #         url='https://cn.bing.com/tlookupv3',
+    #         data=data
+    #     )
+
+        # return [
+        #     (i['displayTarget'], i['transliteration'])
+        #     for i in response.json()[0]['translations']
+        # ]
+
 
 class Translator:
     """必应翻译"""
 
-    def __init__(self, tgt_lang: str, text: str = None, split: str = None,):
+    def __init__(self, tgt_lang: str):
         def conf_seter():
             """处理数据模板"""
             # 读取配置
@@ -95,10 +114,8 @@ class Translator:
             else:
                 raise errors.TargetLanguageNotSupported(tgt_lang)
             return conf
-        self.text = text
         self.response_type = '---'
         self.__split = []
-        self.__sequence_str__(split)
         self.__conf__ = conf_seter()
 
     def __enter__(self):
@@ -157,7 +174,3 @@ class Translator:
                 rep_str(text, self.__split.copy()) if self.__split else text)
 
         raise errors.EmptyTextError(F'无效的字符串:"{text}"')
-
-    def json(self):
-        """返回字典"""
-        return self.translator(self.text, self.__split).json()

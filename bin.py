@@ -40,19 +40,19 @@ def entrance(argv: list):
 
     def f_translator():
         try:
-            text = str(
-                core.Translator(
-                    name_spece.tgt_lang.strip(),
-                    ' '.join(name_spece.text) or paste(),
-                    name_spece.split
-                )
+            text = core.Translator(
+                name_spece.tgt_lang.strip()
+            ).translator(
+                ' '.join(name_spece.text) or paste(),
+                name_spece.split
             )
         except public.errors.EmptyTextError:
             return "待翻译文本为空!"
 
         if name_spece.copy:
-            copy(text)
-        return text
+            copy(str(text))
+
+        return text.text()
 
     def all_tgt():
         all_l_tgt = core.read_inf(core.setting.LANGUAGE_CODE_PATH)
@@ -62,10 +62,10 @@ def entrance(argv: list):
 
         for key in tqdm_keys:
             tqdm_keys.set_description(F'{key}>>>>>{base_language}')
-            i18_tgt = core.Translator(
-                base_language,
+            i18_tgt = core.Translator(base_language).translator(
                 all_l_tgt[key]['text']
             )
+
             temp.append(F"language tgt:[{key}] {i18_tgt}\n")
 
         return ''.join(temp)
