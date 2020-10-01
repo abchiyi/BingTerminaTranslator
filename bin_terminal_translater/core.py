@@ -105,9 +105,9 @@ class Conf:
             }
         }
 
-    def template_of_sematinc(self, fromlang, tolang, text):
+    def template_of_semantic(self, fromlang, tolang, text):
         return {
-            'url': self.__conf__['server']['sematinc'],
+            'url': self.__conf__['server']['semantic'],
             'headers': self.__conf__['headers'],
             'params': self.__conf__['params'],
             'data': {
@@ -172,7 +172,7 @@ class Translator:
     def __semantic__(self, from_language: str, text: str) -> dict:
         """获取详细释义"""
         self.__net_post__(
-            Conf().template_of_sematinc(
+            Conf().template_of_semantic(
                 fromlang=from_language,
                 tolang=self.tolang,
 
