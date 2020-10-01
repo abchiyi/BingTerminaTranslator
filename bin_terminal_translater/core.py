@@ -165,13 +165,9 @@ class Translator:
 
     def __net_post__(self, data):
         try:
-            self.response = requests.post(
-                **data
-            )
-            # FIXME 捕获所有错误
-        except Exception:
-            # FIXME 捕获错误后无动作
-            pass
+            self.response = requests.post(**data)
+        except requests.ConnectionError:
+            raise ConnectionError('连接错误-请检查你的网络')
 
     def __semantic__(self, from_language: str, text: str) -> dict:
         """获取详细释义"""
@@ -179,6 +175,7 @@ class Translator:
             Conf().template_of_sematinc(
                 fromlang=from_language,
                 tolang=self.tolang,
+
                 text=text,
             )
         )
