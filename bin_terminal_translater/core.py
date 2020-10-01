@@ -1,11 +1,12 @@
-from bin_terminal_translater.public import errors
-from bin_terminal_translater import setting
-import requests
-import bs4
-import copy
 import os
 from configparser import ConfigParser, NoSectionError
 from typing import Dict
+
+import bs4
+import requests
+
+from bin_terminal_translater import setting
+from .public import errors
 
 
 def file_check(func):
@@ -19,13 +20,15 @@ def file_check(func):
     return run
 
 
-@file_check
-def read_inf(path: str) -> Dict[str, Dict[str, str]]:
-    """读取配置文件"""
-    c_p = ConfigParser()
-    c_p.read(path, encoding='UTF-8')
+def language_check(func):
+    """检查语言是否在支持列表内"""
 
-    return {i: dict(c_p.items(i)) for i in c_p.sections()}
+    def run(self, tolang, *args, **kwargs):
+        if tolang not in Conf.read_inf(setting.LANGUAGE_CODE_PATH):
+            raise errors.TargetLanguageNotSupported(tolang)
+        return func(self, tolang, *args, **kwargs)
+
+    return run
 
 
 def save_ini(path: str, data_table: Dict[str, Dict[str, str]]):
@@ -47,7 +50,7 @@ def save_ini(path: str, data_table: Dict[str, Dict[str, str]]):
 def update_language_code():
     """语言代码更新"""
     # 读取配置
-    conf_table = read_inf(setting.CONF_PATH)
+    conf_table = Conf.read_inf(setting.CONF_PATH)
     # 读取页面，并获取所有语言标签
     tgt_all_lang = bs4.BeautifulSoup(
         requests.get(conf_table['server']['home_page']).text,
@@ -58,6 +61,61 @@ def update_language_code():
     data = {i.attrs['value']: {'text': i.text} for i in tgt_all_lang}
     save_ini(setting.LANGUAGE_CODE_PATH, data)
     return data
+
+
+class Conf:
+
+    def __init__(self):
+        self.__conf__ = self.read_inf(setting.CONF_PATH)
+
+    @staticmethod
+    @file_check
+    def read_inf(path: str) -> Dict[str, Dict[str, str]]:
+        """读取配置文件"""
+        c_p = ConfigParser()
+        c_p.read(path, encoding='UTF-8')
+
+        return {i: dict(c_p.items(i)) for i in c_p.sections()}
+
+    @staticmethod
+    def save_ini(path: str, data_table: Dict[str, Dict[str, str]]):
+        c_p = ConfigParser()
+        c_p.read(path, encoding='UTF-8')
+
+        for section in data_table.keys():
+            for option in data_table[section].keys():
+                try:
+                    c_p.set(section, option, data_table[section][option])
+                except NoSectionError:
+                    c_p.add_section(section)
+                    c_p.set(section, option, data_table[section][option])
+
+        with open(path, 'w', encoding='UTF-8') as file:
+            c_p.write(file)
+
+    def template_of_translator(self, fromlang, tolang, text) -> dict:
+        return {
+            'url': self.__conf__['server']['translator'],
+            'headers': self.__conf__['headers'],
+            'params': self.__conf__['params'],
+            'data': {
+                'fromLang': fromlang,
+                'to': tolang,
+                'text': text,
+            }
+        }
+
+    def template_of_sematinc(self, fromlang, tolang, text):
+        return {
+            'url': self.__conf__['server']['sematinc'],
+            'headers': self.__conf__['headers'],
+            'params': self.__conf__['params'],
+            'data': {
+                'from': fromlang,
+                'to': tolang,
+                'text': text,
+            }
+        }
 
 
 class TextSeter:
@@ -80,28 +138,18 @@ class TextSeter:
         return ' '.join(texts)
 
     def semantic(self) -> dict:
-        return self.__tra__.__sematinc__(
+        return self.__tra__.__semantic__(
             self.json()[0]['detectedLanguage']['language'], self.text()
         )
 
 
 class Translator:
     """必应翻译"""
+    @language_check
+    def __init__(self, tolang: str, fromlang='auto-detect'):
 
-    def __init__(self, tgt_lang: str):
-        def conf_seter():
-            """处理数据模板"""
-            # 读取配置
-            conf = read_inf(setting.CONF_PATH)
-            # 提取翻译接口地址
-            conf['url'] = conf.pop('server').pop('translation_engine')
-            if tgt_lang in read_inf(setting.LANGUAGE_CODE_PATH):
-                conf['data']['to'] = tgt_lang
-            else:
-                raise errors.TargetLanguageNotSupported(tgt_lang)
-            return conf
-        self.language = tgt_lang
-        self.__conf__ = conf_seter()
+        self.tolang = tolang
+        self.fromlang = fromlang
         self.response = requests.Response()
 
     def __enter__(self):
@@ -112,61 +160,64 @@ class Translator:
 
     def __repr__(self):
         return str(
-            F"<Translator({self.language})>"
+            F"<Translator({self.tolang})>"
         )
 
     def __net_post__(self, data):
         try:
-            self.response = requests.post(**data)
+            self.response = requests.post(
+                **data
+            )
             # FIXME 捕获所有错误
         except Exception:
             # FIXME 捕获错误后无动作
             pass
 
-    def __sematinc__(self, from_language: str, text: str) -> dict:
+    def __semantic__(self, from_language: str, text: str) -> dict:
+        """获取详细释义"""
+        self.__net_post__(
+            Conf().template_of_sematinc(
+                fromlang=from_language,
+                tolang=self.tolang,
+                text=text,
+            )
+        )
 
-        template = {
-            'url': 'https://cn.bing.com/tlookupv3',
-            'data': {
-                'text': text,
-                'to': self.language,
-                'from': from_language,
-            }
-        }
-
-        response = requests.post(**template)
-
-        return {'to': self.language,
+        return {'to': self.tolang,
                 'from': from_language,
                 'semantic': [(i['displayTarget'], i['transliteration'])
-                             for i in response.json()[0]['translations']]
+                             for i in self.response.json()[0]['translations']]
                 }
 
     def translator(self,
                    text: str = '',
-                   split: [str, list, tuple] = None) -> TextSeter:
+                   exclude_s: [str, list, tuple] = None) -> TextSeter:
         """翻译方法"""
 
-        def fromat_text(split, text) -> str:
+        def format_text(strings, texts) -> str:
             """格式化字符串"""
-            if split:
-                if isinstance(split, str):
-                    split = [split.strip()]
-                elif isinstance(split, (list, tuple)):
-                    split = [value.strip()
-                             for value in split if isinstance(value, str)]
-                else:
-                    split = []
-            for i in split:
-                text = ' '.join(text.replace(i, ' ').split())
-            return text
+
+            if isinstance(strings, str):
+                strings = [strings.strip()]
+            elif isinstance(strings, (list, tuple)):
+                strings = [value.strip()
+                           for value in strings if isinstance(value, str)]
+            else:
+                strings = []
+
+            for i in strings:
+                texts = ' '.join(texts.replace(i, ' ').split())
+            return texts
 
         if text.strip():
-            conf = copy.deepcopy(self.__conf__)
-            conf['data']['text'] = fromat_text(split, text)
 
-            # 请求翻译处理
-            self.__net_post__(conf)
+            self.__net_post__(
+                Conf().template_of_translator(
+                    text=format_text(exclude_s, text),
+                    fromlang=self.fromlang,
+                    tolang=self.tolang,
+                ))
+
             return TextSeter(self)
 
         raise errors.EmptyTextError(F'无效的字符串:"{text}"')

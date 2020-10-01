@@ -25,3 +25,6 @@ class Entrance(unittest.TestCase):
             entrance(['en ', '><'.join(text), '-s', '> ', ' <']),
             ' '.join(text)
         )
+
+if __name__ == "__main__":
+    unittest.main()

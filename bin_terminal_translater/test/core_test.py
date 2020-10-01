@@ -4,7 +4,6 @@ import unittest
 
 import requests
 from faker import Faker
-# from pyperclip import copy, paste
 
 from .. import core, setting
 
@@ -16,7 +15,7 @@ class Translate(unittest.TestCase):
         self.tar = core.Translator(self.default_language)
 
         # texts
-        self.text = 'Hello'
+        self.text = '你好'
         self.some_text = [self.faker_data.color_name()
                           for i in range(5)]
         self.color_names = [self.faker_data.color_name() for i in range(5)]
@@ -25,8 +24,8 @@ class Translate(unittest.TestCase):
         pass
 
     def test_translator_with(self):
-        tgt_lang = 'zh-Hans'
-        with core.Translator(tgt_lang=tgt_lang) as translator:
+        tolang = 'zh-Hans'
+        with core.Translator(tolang=tolang) as translator:
             for text in [self.faker_data.color_name() for i in range(2)]:
                 self.assertTrue(
                     isinstance(translator.translator(text).text(), str)
@@ -42,7 +41,7 @@ class Translate(unittest.TestCase):
         # 分割参数接受字符串
         t_text = self.tar.translator(
             text='_'.join(self.color_names),
-            split='_'
+            exclude_s='_'
         )
 
         self.assertEqual(
@@ -54,7 +53,7 @@ class Translate(unittest.TestCase):
         # 分割参数接受一个序列
         t_text = self.tar.translator(
             text='><'.join(self.color_names),
-            split=('>', '<')
+            exclude_s=('>', '<')
         )
 
         self.assertEqual(
@@ -90,7 +89,7 @@ class UpdateTgtLang(unittest.TestCase):
     def test_update_language_code_and_save(self):
         """更新语言 tgt"""
         tgt_lan_of_net_work = core.update_language_code()
-        tgt_lag_of_file = core.read_inf(setting.LANGUAGE_CODE_PATH)
+        tgt_lag_of_file = core.Conf.read_inf(setting.LANGUAGE_CODE_PATH)
 
         self.assertEqual(tgt_lag_of_file, tgt_lan_of_net_work)
 
@@ -140,20 +139,20 @@ class Core(unittest.TestCase):
                         F'Not Found File or Dir :{setting.CONF_PATH}')
 
     def test_read_inf(self):
-        self.assertEqual(type(core.read_inf(setting.CONF_PATH)), dict)
-        self.assertEqual(type(core.read_inf(setting.LANGUAGE_CODE_PATH)), dict)
+        self.assertEqual(type(core.Conf.read_inf(setting.CONF_PATH)), dict)
+        self.assertEqual(type(core.Conf.read_inf(setting.LANGUAGE_CODE_PATH)), dict)
 
     def test_can_save_setting(self):
         path = self.test_ini_path
         try:
             data_table1 = {'test': {'test1': 'test2'}}
             core.save_ini(path, data_table1)
-            self.assertEqual(data_table1, core.read_inf('test.ini'))
+            self.assertEqual(data_table1, core.Conf.read_inf('test.ini'))
 
             data_table2 = {'test3': {'test4': 'test5'}}
             core.save_ini(path, data_table2)
-            self.assertIn('test3', core.read_inf(path))
-            self.assertIn('test', core.read_inf(path))
+            self.assertIn('test3', core.Conf.read_inf(path))
+            self.assertIn('test', core.Conf.read_inf(path))
 
         finally:
             os.system(F'del {path}')

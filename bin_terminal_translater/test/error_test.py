@@ -8,7 +8,7 @@ class ErrorsTest(unittest.TestCase):
         """配置文件读函数在找不到文件时抛出错误"""
         try:
             path = './sr.ini'
-            core.read_inf(path)
+            core.Conf.read_inf(path)
         except public.errors.FileError:
             pass
         else:
@@ -17,7 +17,7 @@ class ErrorsTest(unittest.TestCase):
     def test_not_support_error(self):
         """在给出不受支持的目标语言代码时抛出错误"""
         try:
-            core.Translator(tgt_lang='abc')
+            core.Translator(tolang='abc')
         except public.errors.TargetLanguageNotSupported:
             pass
         else:
@@ -27,8 +27,12 @@ class ErrorsTest(unittest.TestCase):
         """在没有给出文本时的错误"""
         try:
             # 确保字符串仅包含空格时也作为空处理
-            core.Translator('en').translator('  ')
+            core.Translator(tolang='en').translator('  ')
         except public.errors.EmptyTextError:
             pass
         else:
             self.fail('Not captured:EmptyTextError')
+
+
+if __name__ == "__main__":
+    unittest.main()
