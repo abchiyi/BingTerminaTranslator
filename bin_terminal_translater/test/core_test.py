@@ -84,16 +84,6 @@ class Translate(unittest.TestCase):
                 self.assertTrue(isinstance(i, str))
 
 
-class UpdateTgtLang(unittest.TestCase):
-
-    def test_update_language_code_and_save(self):
-        """更新语言 tgt"""
-        tgt_lan_of_net_work = core.update_language_code()
-        tgt_lag_of_file = core.Conf.read_inf(setting.LANGUAGE_CODE_PATH)
-
-        self.assertEqual(tgt_lag_of_file, tgt_lan_of_net_work)
-
-
 class Core(unittest.TestCase):
 
     def setUp(self):
@@ -140,7 +130,8 @@ class Core(unittest.TestCase):
 
     def test_read_inf(self):
         self.assertEqual(type(core.Conf.read_inf(setting.CONF_PATH)), dict)
-        self.assertEqual(type(core.Conf.read_inf(setting.LANGUAGE_CODE_PATH)), dict)
+        self.assertEqual(type(core.Conf.read_inf(
+            setting.LANGUAGE_CODE_PATH)), dict)
 
     def test_can_save_setting(self):
         path = self.test_ini_path
@@ -156,6 +147,13 @@ class Core(unittest.TestCase):
 
         finally:
             os.system(F'del {path}')
+
+    def test_update_language_code_and_save(self):
+        """更新语言 tgt"""
+        tgt_lan_of_net_work = core.update_language_code()
+        tgt_lag_of_file = core.Conf.read_inf(setting.LANGUAGE_CODE_PATH)
+
+        self.assertEqual(tgt_lag_of_file, tgt_lan_of_net_work)
 
 
 if __name__ == "__main__":
