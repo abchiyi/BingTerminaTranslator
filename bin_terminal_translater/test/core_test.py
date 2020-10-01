@@ -62,6 +62,13 @@ class Translate(unittest.TestCase):
             '功能：分割参数接受序列功能被破坏'
         )
 
+    def test_translator_return_is_text_obj(self):
+        obj = self.tar.translator(self.text)
+        self.assertTrue(
+            isinstance(obj, core.Text),
+            type(obj)
+        )
+
     def test_json(self):
         """测试json方法是否有效"""
         t_text = self.tar.translator(self.text)

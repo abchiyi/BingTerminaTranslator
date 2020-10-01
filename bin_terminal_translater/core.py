@@ -147,7 +147,6 @@ class Translator:
     """必应翻译"""
     @language_check
     def __init__(self, tolang: str, fromlang='auto-detect'):
-
         self.tolang = tolang
         self.fromlang = fromlang
         self.response = requests.Response()
@@ -175,7 +174,6 @@ class Translator:
             Conf().template_of_semantic(
                 fromlang=from_language,
                 tolang=self.tolang,
-
                 text=text,
             )
         )
