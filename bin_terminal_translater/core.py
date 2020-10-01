@@ -118,7 +118,7 @@ class Conf:
         }
 
 
-class TextSeter:
+class Text:
 
     def __init__(self, tra):
         self.__tra__: Translator = tra
@@ -188,7 +188,7 @@ class Translator:
 
     def translator(self,
                    text: str = '',
-                   exclude_s: [str, list, tuple] = None) -> TextSeter:
+                   exclude_s: [str, list, tuple] = None) -> Text:
         """翻译方法"""
 
         def format_text(strings, texts) -> str:
@@ -215,6 +215,6 @@ class Translator:
                     tolang=self.tolang,
                 ))
 
-            return TextSeter(self)
+            return Text(self)
 
         raise errors.EmptyTextError(F'无效的字符串:"{text}"')
