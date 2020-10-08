@@ -170,19 +170,31 @@ class Semantic:
 
 class Text:
 
-    def __init__(self, tra, reper_text):
-        self.__tra__: Translator = tra
+    def __init__(self, to_lang, reper_text, fromlang='auto-detect',):
+        if reper_text.strip():
+            data = requests.post(
+                **Conf().template_of_translator(
+                    fromlang=fromlang,
+                    text=reper_text,
+                    tolang=to_lang,
+                )).json()
+        else:
+            raise errors.EmptyTextError(F'无效的字符串:"{reper_text}"')
+
+        self.__data__ = data
+        self.from_lang = data[0]['detectedLanguage']['language']
         self.reper_text = reper_text
+        self.to_lang = to_lang
 
     def __repr__(self):
         return self.text()
 
     def json(self) -> dict:
-        return self.__tra__.response.json()
+        return self.__data__
 
     def text(self) -> str:
         texts = []
-        for item in self.__tra__.response.json():
+        for item in self.json():
             for text_item in item['translations']:
                 texts.append(text_item['text'])
 
@@ -191,7 +203,7 @@ class Text:
     def semantic(self) -> Semantic:
         return Semantic(
             self.json()[0]['detectedLanguage']['language'],
-            self.__tra__.tolang,
+            self.to_lang,
             self.reper_text
         )
 
@@ -199,10 +211,8 @@ class Text:
 class Translator:
     """必应翻译"""
     @ language_check
-    def __init__(self, tolang: str, fromlang='auto-detect'):
-        self.tolang = tolang
-        self.fromlang = fromlang
-        self.response = requests.Response()
+    def __init__(self, to_lang: str):
+        self.to_lang = to_lang
 
     def __enter__(self):
         return self
@@ -214,12 +224,6 @@ class Translator:
         return str(
             F"<Translator({self.tolang})>"
         )
-
-    def __net_post__(self, data):
-        try:
-            self.response = requests.post(**data)
-        except requests.ConnectionError:
-            raise ConnectionError('连接错误-请检查你的网络')
 
     def translator(self,
                    text: str = '',
@@ -241,15 +245,4 @@ class Translator:
                 texts = ' '.join(texts.replace(i, ' ').split())
             return texts
 
-        if text.strip():
-
-            self.__net_post__(
-                Conf().template_of_translator(
-                    text=format_text(exclude_s, text),
-                    fromlang=self.fromlang,
-                    tolang=self.tolang,
-                ))
-
-            return Text(self, text)
-
-        raise errors.EmptyTextError(F'无效的字符串:"{text}"')
+        return Text(self.to_lang, format_text(exclude_s, text))
