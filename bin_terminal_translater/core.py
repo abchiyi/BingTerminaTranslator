@@ -222,7 +222,7 @@ class Translator:
 
     def __repr__(self):
         return str(
-            F"<Translator({self.tolang})>"
+            F"<Translator({self.to_lang})>"
         )
 
     def translator(self,

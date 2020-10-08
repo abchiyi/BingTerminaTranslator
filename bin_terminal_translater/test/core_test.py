@@ -25,7 +25,7 @@ class Translate(unittest.TestCase):
 
     def test_translator_with(self):
         tolang = 'zh-Hans'
-        with core.Translator(tolang=tolang) as translator:
+        with core.Translator(tolang) as translator:
             for text in [self.faker_data.color_name() for i in range(2)]:
                 self.assertTrue(
                     isinstance(translator.translator(text).text(), str)
@@ -74,7 +74,6 @@ class Translate(unittest.TestCase):
         t_text = self.tar.translator(self.text)
 
         # 实际调用返回对象的 ‘.json’方法
-        # TODO 即将被修改的参数格式
         self.assertTrue(
             isinstance(t_text.json(), list),
             t_text.json()
