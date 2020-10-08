@@ -80,15 +80,55 @@ class Translate(unittest.TestCase):
             t_text.json()
         )
 
-    def test_semantic(self):
+
+class Semantic(unittest.TestCase):
+
+    def setUp(self):
+        self.tar = core.Translator('en').translator('你好')
+        self.semantic = self.tar.semantic()
+
+    def test_text_obj_semantic_return_is_semantic_obj(self):
+        self.assertTrue(
+            isinstance(self.tar, core.Text),
+            type(self.tar)
+        )
+        self.assertTrue(
+            isinstance(self.semantic, core.Semantic),
+            type(self.semantic)
+        )
+
+    def test_json_method(self):
+        data = self.semantic.json()
+
+        self.assertTrue(isinstance(data, dict), type(data))
+
+        if ('to' not in data) and ('from' not in data):
+            self.fail('json方法返回字典必要的条目')
+
+        self.assertEqual(type(data['semantic']), dict, data)
+
+    def test_text_method(self):
+        data = self.semantic.json()['semantic']
+        text = self.semantic.text()
+
+        for key in data:
+            if key not in text:
+                self.fail(F'{key}未包含')
+
+        self.assertTrue(isinstance(text, str), type(text))
+
+    def test_is_iterative(self):
+        for i in self.semantic:
+            print(i.text, i.semantic)
+
+    def test_attr(self):
         semantic = core.Translator('zh-Hans').translator('Hello').semantic()
 
-        if ('to' not in semantic) and ('from' not in semantic):
-            self.fail('没有包含必要的参数')
-
-        for item in semantic['semantic']:
-            for i in item:
-                self.assertTrue(isinstance(i, str))
+        try:
+            print(semantic.from_lang)
+            print(semantic.to_lang)
+        except AttributeError as error:
+            self.fail(F'{error}需要包含的属性')
 
 
 class Core(unittest.TestCase):

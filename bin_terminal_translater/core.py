@@ -1,6 +1,7 @@
 import os
 from configparser import ConfigParser, NoSectionError
 from typing import Dict
+import collections
 
 import bs4
 import requests
@@ -118,10 +119,60 @@ class Conf:
         }
 
 
+SemanticItem = collections.namedtuple('SemanticItem', ['text', 'semantic'])
+
+
+class Semantic:
+
+    def __init__(self, from_lang, to_lang, reper_text):
+        self.reper_text = reper_text
+        self.from_lang = from_lang
+        self.to_lang = to_lang
+
+        template = Conf().template_of_semantic(
+            fromlang=from_lang,
+            text=reper_text,
+            tolang=to_lang,
+        )
+
+        self.__data__ = requests.post(
+            **template
+        ).json()[0]['translations']
+
+    def __repr__(self):
+        return F'"{self.reper_text}"({self.from_lang})-->({self.to_lang})'
+
+    def text(self) -> str:
+        data = self.json()['semantic']
+        text = '\n'.join([F'{k}:{",".join(v)}' for k, v in data.items()])
+        return text
+
+    def json(self) -> dict:
+        semantics = {}
+        for i in self.__data__:
+            temp = []
+            for i_i in i['backTranslations']:
+                temp.append(i_i['displayText'])
+            semantics[i['displayTarget']] = temp
+        return {
+            'from': self.from_lang,
+            'semantic': semantics,
+            'to': self.to_lang
+        }
+
+    def __getitem__(self, key):
+        item = self.__data__[key]
+        return SemanticItem(
+            item['displayTarget'],
+            [i['displayText'] for i in item['backTranslations']]
+        )
+
+
 class Text:
 
-    def __init__(self, tra):
+    def __init__(self, tra, reper_text):
         self.__tra__: Translator = tra
+        self.reper_text = reper_text
 
     def __repr__(self):
         return self.text()
@@ -137,15 +188,17 @@ class Text:
 
         return ' '.join(texts)
 
-    def semantic(self) -> dict:
-        return self.__tra__.__semantic__(
-            self.json()[0]['detectedLanguage']['language'], self.text()
+    def semantic(self) -> Semantic:
+        return Semantic(
+            self.json()[0]['detectedLanguage']['language'],
+            self.__tra__.tolang,
+            self.reper_text
         )
 
 
 class Translator:
     """必应翻译"""
-    @language_check
+    @ language_check
     def __init__(self, tolang: str, fromlang='auto-detect'):
         self.tolang = tolang
         self.fromlang = fromlang
@@ -167,22 +220,6 @@ class Translator:
             self.response = requests.post(**data)
         except requests.ConnectionError:
             raise ConnectionError('连接错误-请检查你的网络')
-
-    def __semantic__(self, from_language: str, text: str) -> dict:
-        """获取详细释义"""
-        self.__net_post__(
-            Conf().template_of_semantic(
-                fromlang=from_language,
-                tolang=self.tolang,
-                text=text,
-            )
-        )
-
-        return {'to': self.tolang,
-                'from': from_language,
-                'semantic': [(i['displayTarget'], i['transliteration'])
-                             for i in self.response.json()[0]['translations']]
-                }
 
     def translator(self,
                    text: str = '',
@@ -213,6 +250,6 @@ class Translator:
                     tolang=self.tolang,
                 ))
 
-            return Text(self)
+            return Text(self, text)
 
         raise errors.EmptyTextError(F'无效的字符串:"{text}"')
