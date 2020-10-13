@@ -17,17 +17,27 @@ class ErrorsTest(unittest.TestCase):
     def test_not_support_error(self):
         """在给出不受支持的目标语言代码时抛出错误"""
         try:
-            core.Translator(tolang='abc')
+            core.Translator('abc')
         except public.errors.TargetLanguageNotSupported:
             pass
         else:
-            self.fail('Not captured:TargetLanguageNotSupported')
+            self.fail(
+                'Not captured:TargetLanguageNotSupported with "Translator" obj'
+            )
+        try:
+            core.Text('abc', 'hello')
+        except public.errors.TargetLanguageNotSupported:
+            pass
+        else:
+            self.fail(
+                'Not captured:TargetLanguageNotSupported with "Text" obj'
+            )
 
     def test_empty_text_error(self):
         """在没有给出文本时的错误"""
         try:
             # 确保字符串仅包含空格时也作为空处理
-            core.Translator(tolang='en').translator('  ')
+            core.Translator('en').translator('  ')
         except public.errors.EmptyTextError:
             pass
         else:

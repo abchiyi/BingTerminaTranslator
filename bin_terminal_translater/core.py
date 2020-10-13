@@ -169,7 +169,7 @@ class Semantic:
 
 
 class Text:
-
+    @language_check
     def __init__(self, to_lang, reper_text, fromlang='auto-detect',):
         if reper_text.strip():
             data = requests.post(
