@@ -32,6 +32,17 @@ def language_check(func):
     return run
 
 
+def equal_language_check(func):
+    """检查from与to语言代码是否相等"""
+
+    def run(self, from_lang, to_lang, reper_text):
+        if from_lang == to_lang:
+            raise errors.EqualTextLanguage(F"({from_lang}):{reper_text}")
+        return func(self, from_lang, to_lang, reper_text)
+
+    return run
+
+
 def save_ini(path: str, data_table: Dict[str, Dict[str, str]]):
     c_p = ConfigParser()
     c_p.read(path, encoding='UTF-8')
@@ -124,6 +135,7 @@ SemanticItem = collections.namedtuple('SemanticItem', ['text', 'semantic'])
 
 class Semantic:
 
+    @equal_language_check
     def __init__(self, from_lang, to_lang, reper_text):
         self.reper_text = reper_text
         self.from_lang = from_lang

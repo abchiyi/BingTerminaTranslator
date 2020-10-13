@@ -46,11 +46,11 @@ class ErrorsTest(unittest.TestCase):
     def test_language_code_equa_to_the_text_language(self):
         """文本语言与给出的语言码相等时抛出错误"""
         try:
-            r = core.Text('en', 'hello').semantic()
+            core.Text('en', 'hello').semantic()
         except public.errors.EqualTextLanguage:
             pass
         else:
-            self.fail('wei')
+            self.fail('Not captured:EqualTextLanguage')
 
 
 if __name__ == "__main__":
