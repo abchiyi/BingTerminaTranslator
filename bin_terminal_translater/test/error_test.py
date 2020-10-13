@@ -43,6 +43,15 @@ class ErrorsTest(unittest.TestCase):
         else:
             self.fail('Not captured:EmptyTextError')
 
+    def test_language_code_equa_to_the_text_language(self):
+        """文本语言与给出的语言码相等时抛出错误"""
+        try:
+            r = core.Text('en', 'hello').semantic()
+        except public.errors.EqualTextLanguage:
+            pass
+        else:
+            self.fail('wei')
+
 
 if __name__ == "__main__":
     unittest.main()

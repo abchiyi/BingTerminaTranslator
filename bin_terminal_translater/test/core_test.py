@@ -134,6 +134,12 @@ class Semantic(unittest.TestCase):
         except AttributeError as error:
             self.fail(F'{error}需要包含的属性')
 
+    def test_smeantic_have_len(self):
+        try:
+            len(self.semantic)
+        except TypeError:
+            self.fail('semantic 没有__len__方法')
+
 
 class Core(unittest.TestCase):
 

@@ -8,3 +8,7 @@ class EmptyTextError(Exception):
 
 class FileError(Exception):
     pass
+
+
+class EqualTextLanguage(Exception):
+    pass

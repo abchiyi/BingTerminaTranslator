@@ -167,6 +167,9 @@ class Semantic:
             [i['displayText'] for i in item['backTranslations']]
         )
 
+    def __len__(self):
+        return len(self.__data__)
+
 
 class Text:
     @language_check
