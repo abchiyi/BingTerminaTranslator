@@ -87,6 +87,7 @@ class Semantic(unittest.TestCase):
         self.semantic = self.tar.semantic()
 
     def test_text_obj_semantic_return_is_semantic_obj(self):
+        """Text对象的semantic方法返回Semantic对象"""
         self.assertTrue(
             isinstance(self.tar, core.Text),
             type(self.tar)
@@ -97,6 +98,7 @@ class Semantic(unittest.TestCase):
         )
 
     def test_json_method(self):
+        """Semantic对象包含json方法"""
         data = self.semantic.json()
 
         self.assertTrue(isinstance(data, dict), type(data))
@@ -107,6 +109,7 @@ class Semantic(unittest.TestCase):
         self.assertEqual(type(data['semantic']), dict, data)
 
     def test_text_method(self):
+        """Semantic对象包含text方法"""
         data = self.semantic.json()['semantic']
         text = self.semantic.text()
 
@@ -117,10 +120,12 @@ class Semantic(unittest.TestCase):
         self.assertTrue(isinstance(text, str), type(text))
 
     def test_is_iterative(self):
+        """Semantic对象是可迭代的"""
         for i in self.semantic:
             print(i.text, i.semantic)
 
     def test_attr(self):
+        """Semantici必须包含的属性"""
         semantic = core.Translator('zh-Hans').translator('Hello').semantic()
 
         try:
