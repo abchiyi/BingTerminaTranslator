@@ -122,7 +122,7 @@ class Semantic(unittest.TestCase):
     def test_is_iterative(self):
         """Semantic对象是可迭代的"""
         for i in self.semantic:
-            print(i.text, i.semantic)
+            isinstance(i, core.SemanticItem)
 
     def test_attr(self):
         """Semantici必须包含的属性"""
