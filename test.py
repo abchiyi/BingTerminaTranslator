@@ -30,12 +30,16 @@ class Entrance(unittest.TestCase):
 
     def test_make_script(self):
         """测试能否正常制作脚本"""
-        entrance(["zh-Hans", "--script"])
+        tgt_lang = 'zh-Hans'
+        entrance([tgt_lang, "--script"])
 
-        if not Path('./scripts/zh-Hans.ps1').is_file():
+        path = './scripts/'
+        if not Path(F'{path}{tgt_lang}.ps1').is_file():
             self.fail('脚本未被创建')
-        else:
-            os.system('del ./script/zh-Hans.ps1')
+
+        # 删除测试脚本
+        for file in os.listdir(path):
+            os.remove(F'{path}{file}')
 
 
 if __name__ == "__main__":
