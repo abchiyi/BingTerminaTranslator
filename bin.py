@@ -1,3 +1,5 @@
+from bin_terminal_translater.core import Semantic
+from typing import Text
 from bin_terminal_translater import core, public
 from pyperclip import paste, copy
 from pathlib import Path
@@ -47,20 +49,33 @@ def make_script(tgt_lang):
 
 
 def f_translator(name_spece):
+    tra = core.Translator(name_spece.tgt_lang.strip())
     try:
-        text = core.Translator(
-            name_spece.tgt_lang.strip()
-        ).translator(
+        # 文本主体
+        text_obj = tra.translator(
+            # 分别从name_spece 和 paste中获取文本，name_space 优先
             ' '.join(name_spece.text) or paste(),
             name_spece.split
         )
+
+        # 详细释义
+        semantic = text_obj.semantic()
+
+        if semantic:
+            text = F"{str(text_obj)}\n{'-='*20}\n{semantic.text()}"
+        else:
+            text = text_obj.text()
+
+        if name_spece.copy:
+            copy(text)
+
+        return text
+
     except public.errors.EmptyTextError:
         return "待翻译文本为空!"
-
-    if name_spece.copy:
-        copy(str(text))
-
-    return text.text()
+    except public.errors.EqualTextLanguage:
+        # 在获取 semantic 时可能出现的错误
+        pass
 
 
 def all_tgt(name_spece):
