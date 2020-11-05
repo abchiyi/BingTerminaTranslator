@@ -1,0 +1,1 @@
+bin zh-Hans $args

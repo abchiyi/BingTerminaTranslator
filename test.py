@@ -1,6 +1,8 @@
 import unittest
 from bin import entrance
 from pyperclip import copy, paste
+from pathlib import Path
+import os
 
 
 class Entrance(unittest.TestCase):
@@ -25,6 +27,16 @@ class Entrance(unittest.TestCase):
             entrance(['en ', '><'.join(text), '-s', '> ', ' <']),
             ' '.join(text)
         )
+
+    def test_make_script(self):
+        """测试能否正常制作脚本"""
+        entrance(["zh-Hans", "--script"])
+
+        if not Path('./scripts/zh-Hans.ps1').is_file():
+            self.fail('脚本未被创建')
+        else:
+            os.system('del ./script/zh-Hans.ps1')
+
 
 if __name__ == "__main__":
     unittest.main()
