@@ -1,6 +1,8 @@
 .vscode
 .idea
 try.py
+./bin_terminal_translater
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
