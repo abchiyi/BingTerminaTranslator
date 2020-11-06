@@ -1,4 +1,6 @@
 import unittest
+
+from bs4.element import Script
 from bin import entrance
 from pyperclip import copy, paste
 from pathlib import Path
@@ -30,16 +32,16 @@ class Entrance(unittest.TestCase):
 
     def test_make_script(self):
         """测试能否正常制作脚本"""
+        base_path = f'{os.getenv("BTT_HOME")}/scripts/'
         tgt_lang = 'zh-Hans'
         entrance([tgt_lang, "--script"])
 
-        path = './scripts/'
-        if not Path(F'{path}{tgt_lang}.ps1').is_file():
+        if not Path(F'{base_path}{tgt_lang}.ps1').is_file():
             self.fail('脚本未被创建')
 
         # 删除测试脚本
-        for file in os.listdir(path):
-            os.remove(F'{path}{file}')
+        for file in os.listdir(base_path):
+            os.remove(F'{base_path}{file}')
 
 
 if __name__ == "__main__":

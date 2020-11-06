@@ -39,43 +39,50 @@ def parser(args) -> argparse.Namespace:
 
 
 def make_script(tgt_lang):
-    file_path = F'./scripts/{tgt_lang}.ps1'
-    # FIXME 当前仅对windows做支持
-    with open(file_path, 'w', encoding='utf-8') as file:
-        file.write(F'bin {tgt_lang} $args')
+    base_path = F'{os.getenv("BTT_HOME")}/scripts/'
+    file_path = F'{base_path}{tgt_lang}.ps1'
+
+    try:
+        with open(file_path, 'w', encoding='utf-8') as file:
+            file.write(F'bin {tgt_lang} $args')
+    except FileNotFoundError:
+        os.mkdir(base_path)
 
     if not Path(file_path).is_file():
         raise Exception(F"Fall Make Script {tgt_lang}")
 
 
 def f_translator(name_spece):
-    tra = core.Translator(name_spece.tgt_lang.strip())
+    tgt_lang = name_spece.tgt_lang.strip()
+    # 分别从name_spece 和 paste中获取文本，name_space 优先
+    reper_text = ' '.join(name_spece.text) or paste()
+
+    tra = core.Translator(tgt_lang)
     try:
         # 文本主体
         text_obj = tra.translator(
-            # 分别从name_spece 和 paste中获取文本，name_space 优先
-            ' '.join(name_spece.text) or paste(),
+            reper_text,
             name_spece.split
         )
-
-        # 详细释义
-        semantic = text_obj.semantic()
-
-        if semantic:
-            text = F"{str(text_obj)}\n{'-='*20}\n{semantic.text()}"
+        # 先于smantic定义text的值
+        text = text_obj.text()
+        try:
+            # 详细释义
+            semantic = text_obj.semantic()
+        except public.errors.EqualTextLanguage:
+            return F"文本'{reper_text}'已是'{tgt_lang}'类型，无需翻译'"
         else:
-            text = text_obj.text()
+            if semantic:
+                text = F"{str(text_obj)}\n{'-='*20}\n{semantic.text()}"
 
         if name_spece.copy:
-            copy(text)
+            # copy选项仅复制翻译后的原始文本
+            copy(text_obj.text())
 
         return text
 
     except public.errors.EmptyTextError:
         return "待翻译文本为空!"
-    except public.errors.EqualTextLanguage:
-        # 在获取 semantic 时可能出现的错误
-        pass
 
 
 def all_tgt(name_spece):
@@ -98,9 +105,7 @@ def all_tgt(name_spece):
 def entrance(argv: list):
     """翻译入口"""
     name_spece = parser(argv)
-    # debug mode
-    if name_spece.debug:
-        print(F'DeBugMode:\n\t{name_spece}')
+
     # 列出所有语言标签
     if name_spece.list_all_ltgt:
         return all_tgt(name_spece)
@@ -122,10 +127,24 @@ def entrance(argv: list):
             return f_translator(name_spece)
         except public.errors.TargetLanguageNotSupported:
             return F"不支持的语言:‘{name_spece.tgt_lang}’\n你可以使用‘-l’选项查看语言支持列表"
+    finally:
+        # debug mode
+        if name_spece.debug:
+            print(F'DeBugMode:\n\t{name_spece}')
+            print(F'\tRunningPath:{os.getcwd()}')
+
+
+def run(argv):
+    if len(argv) < 2:
+        entrance(['-h'])
+    else:
+        print(entrance(argv[1:]))
 
 
 if __name__ == "__main__":
-    if len(os.sys.argv) < 2:
-        entrance(['-h'])
-    else:
-        print(entrance(os.sys.argv[1:]))
+    try:
+        run(os.sys.argv)
+
+    # 再此捕获所有异常意在快速以同样的参数复现错误
+    except Exception as error:
+        run(os.sys.argv + ['-d'])

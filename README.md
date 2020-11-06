@@ -7,27 +7,27 @@
 
 ---
 
-### 下载
+## 下载
 
 [各版本下载[gitee]][1]
 
 ---
 
-### 安装教程
+## 安装教程
 
-#### ![Gitee](/media/SVG/windows.svg "Windwos") <font color='blue'>Windwos 安装配置</font>
+### ![Gitee](/media/SVG/windows.svg "Windwos") <font color='blue'>Windwos 安装配置</font>
 
-###### 脚本安装
+#### 快速安装
 
-下载最新的Windows发行版，该版本以打包运行环境无需配置运行环境。解压并右键执行“indtall.ps1”脚本即可。
-异或者克隆最新仓库，执行“packeg_for_windws.ps1”来打包最新的版本，当然你需要确保运行环境正常，打包完毕将在桌面生成安装包，其版本号将沿用最新版本号
+下载最新的Windows[发行版][1]，解压并右键执行“install.ps1”脚本安装
 
+#### 手动安装
 
-###### 手动安装
+首先你需要确保已安装 [python][2]3.5 或更高版本 以及 [Git][3]
 
-!!!**源码运行仅支持Python3.6或更高版本**!!!
+请务必保证所有语句在同一命令窗口中执行，如有中断请删除所有文件从头再来
 
-首先你需要确保安装 python3.6 或更高版本，python系统变量名为“python”
+所有文件将被放置到你的'$HOME'目录下
 
     $prg = $HOME + '\.bin_terminal_translator'
     git clone https://gitee.com/abchiyi/BinTerminaTranslator $prg;cd $prg
@@ -35,9 +35,13 @@
 现在安装所需的运行库
 
     python -m pip install -r .\install\packges_of_windows
-    mv .\bin.py .\co.py;echo "python $prg\co.py `$args" > .\bin.ps1
+
+执行打包程序
+
+
 
 配置到系统环境变量
+
 
     [System.Environment]::SetEnvironmentVariable("path", $env:Path + ';' + $prg + '\', "User")
 
@@ -90,4 +94,9 @@
 
 ![tgt loading](/media/gif/tgt_loading_zh.gif "转换至码表解释至目标语言")
 
+<!-- 发行版链接 -->
 [1]:https://gitee.com/abchiyi/BinTerminaTranslator/releases
+<!-- python -->
+[2]:https://www.python.org/downloads/windows/
+<!-- git -->
+[3]:https://git-scm.com/downloads
