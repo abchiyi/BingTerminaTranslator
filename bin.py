@@ -1,5 +1,3 @@
-from bin_terminal_translater.core import Semantic
-from typing import Text
 from bin_terminal_translater import core, public
 from pyperclip import paste, copy
 from pathlib import Path
