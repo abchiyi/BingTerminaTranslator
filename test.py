@@ -1,6 +1,5 @@
 import unittest
 
-from bs4.element import Script
 from bin import entrance
 from pyperclip import copy, paste
 from pathlib import Path
@@ -22,13 +21,6 @@ class Entrance(unittest.TestCase):
         entrance('zh-Hans -c'.split())
         # 清空剪贴板
         self.assertNotEqual(paste(), or_text)
-
-    def test_split_string(self):
-        text = ['hello', 'world']
-        self.assertEqual(
-            entrance(['en ', '><'.join(text), '-s', '> ', ' <']),
-            ' '.join(text)
-        )
 
     def test_make_script(self):
         """测试能否正常制作脚本"""

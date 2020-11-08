@@ -1,4 +1,4 @@
-from bin_terminal_translater import core, public
+from bing_translation_for_python import core, public, setting
 from pyperclip import paste, copy
 from pathlib import Path
 
@@ -84,7 +84,7 @@ def f_translator(name_spece):
 
 
 def all_tgt(name_spece):
-    all_l_tgt = core.Conf.read_inf(core.setting.LANGUAGE_CODE_PATH)
+    all_l_tgt = setting.Conf().tgt_lang
     tqdm_keys = tqdm.tqdm(all_l_tgt.keys())
     base_language = name_spece.tgt_lang.strip()
     temp = []
@@ -116,11 +116,6 @@ def entrance(argv: list):
     try:
         return f_translator(name_spece)
     except public.errors.TargetLanguageNotSupported:
-        # 假设语言标签不存在本地文件中，联网更新，重试
-        print(
-            F'不受支持的语言:<{name_spece.tgt_lang}>\n正在获取联网支持...'
-        )
-        core.update_language_code()
         try:
             return f_translator(name_spece)
         except public.errors.TargetLanguageNotSupported:

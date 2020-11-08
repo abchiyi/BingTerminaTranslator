@@ -1,6 +1,5 @@
-pyperclip
-requests
-bs4
+bing-translation-for-python
 pyinstaller
+pyperclip
 faker
 tqdm
