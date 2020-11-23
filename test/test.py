@@ -2,25 +2,44 @@ import unittest
 
 from bing_translator import entrance
 from pyperclip import copy, paste
-from pathlib import Path
-import os
 
 
-class Entrance(unittest.TestCase):
-    """old test"""
+class MainTest(unittest.TestCase):
 
-    def setUp(self):
-        self.argv = ["zh-Hans Hello world"]
+    def tearDown(self) -> None:
+        # 清理剪贴板
+        copy('')
 
-    def test_can_copy_it(self):
+    def test_copy_option(self):
         """测试是否能正确读写剪贴板"""
-        or_text = 'hello copy program'
+
+        repr_text = 'hello world'
         # 向剪贴板写入待读取文本
-        copy(or_text)
-        # 从剪贴板读取,并将结果写回剪贴板
-        entrance('zh-Hans -c'.split())
-        # 清空剪贴板
-        self.assertNotEqual(paste(), or_text)
+        copy(repr_text)
+        # 参数中不给出文本参数，以便从剪贴板读取
+        text = entrance(['zh-Hans','-c','-d'])
+
+        self.assertNotEqual(text, paste())
+
+    def test_error_language_tag(self):
+        entrance(['abc','hello'])
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     #  TODO 暂时不支持
     # def test_make_script(self):

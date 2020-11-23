@@ -9,11 +9,11 @@ import os
 def parser(args) -> argparse.Namespace:
     a_p = argparse.ArgumentParser(
         prog='bin',
-        # usage='%(prog)s tgt_lang [text] [optionals]',
+        usage='%(prog)s lang_tag [text] [optionals]',
     )
     # 位置参数 #
     # 语言类型
-    a_p.add_argument('tgt_lang', help='Target tgt_lang', default='zh-Hans')
+    a_p.add_argument('lang_tag', help='Target lang_tag', default='zh-Hans')
     # 文本，接受多个参数
     a_p.add_argument('text', nargs='*', default=None, help='some texts')
 
@@ -21,65 +21,45 @@ def parser(args) -> argparse.Namespace:
     # 复制输出内容
     a_p.add_argument('-c', '--copy', action='store_true',
                      help='Copy to the clipboard')
-    # de bug 模式
-    a_p.add_argument('-d', '--debug', action='store_true',
-                     help='DeBug Mode')
-    # 移除指定字符串， 接受多个参数
-    a_p.add_argument('-s', '--split', nargs='*',
-                     help='Specifies the text split character')
     # 以当前指定语言模式列出所有语言标签
     a_p.add_argument('-l', '--list_all_ltgt', action='store_true',
                      help='List all languages')
+    # de bug 模式
+    a_p.add_argument('-d', '--debug', action='store_true',
+                     help='DeBug Mode')
 
     return a_p.parse_args(args)
 
-
-# def make_script(tgt_lang):
-#     base_path = F'{os.getenv("BTT_HOME")}/scripts/'
-#     file_path = F'{base_path}{tgt_lang}.ps1'
-
-#     try:
-#         with open(file_path, 'w', encoding='utf-8') as file:
-#             file.write(F'bin {tgt_lang} $args')
-#     except FileNotFoundError:
-#         os.mkdir(base_path)
-
-#     if not Path(file_path).is_file():
-#         raise Exception(F"Fall Make Script {tgt_lang}")
-
-
-def f_translator(name_spece):
-    tgt_lang = name_spece.tgt_lang.strip()
+def translator(name_spece):
+    lang_tag = name_spece.lang_tag.strip()
     # 分别从name_spece 和 paste中获取文本，name_space 优先
     reper_text = ' '.join(name_spece.text) or paste()
 
-    tra = core.Translator(tgt_lang)
     try:
         # 文本主体
-        text_obj = tra.translator(
-            reper_text,
-            name_spece.split
-        )
-        # 先于smantic定义text的值
-        text = text_obj.text()
+        text_obj = core.Translator(lang_tag).translator(reper_text)
         try:
-            # 详细释义
+            # 如果文本是一个单词就能够获取到它的详细释义
             semantic = text_obj.semantic()
+
+        # 需要在这里注意等同语言错误,在把英语翻译到英语这样的情况时它会出现
+        # 你无法获取英语翻译为英语的解释意思
         except public.errors.EqualTextLanguage:
-            return F"文本'{reper_text}'已是'{tgt_lang}'类型，无需翻译'"
+                print(F"文本'{reper_text}'已是'{lang_tag}'类型，无需翻译")
         else:
             if semantic:
-                text = F"{str(text_obj)}\n{'-='*20}\n{semantic.text()}"
+                return F"{str(text_obj)}\n{'-='*20}\n{semantic.text()}"
+
+        return text_obj.text()
 
         if name_spece.copy:
-            # copy选项仅复制翻译后的原始文本
+            # copy选项仅翻译后的文本
             copy(text_obj.text())
 
-        return text
 
+    # 这出现在控制台和终端都没有获取到有效的文本时
     except public.errors.EmptyTextError:
         return "待翻译文本为空!"
-
 
 def list_language_tag(name_spece):
     all_l_tgt = setting.Config().tgt_lang
@@ -97,26 +77,27 @@ def list_language_tag(name_spece):
 
     return ''.join(temp)
 
-
 def default_help(argv):
-    if len(argv) < 2:
-        return ['-h']
-    return argv
-
+    # 没有有效参数时,默认显示帮助信息
+    if argv:
+        return argv
+    return ['-h']
 
 def entrance(args: list = None):
     """翻译入口"""
-    args = default_help(os.sys.argv[1:])
-    name_spece = parser(args)
+    if not args:
+        args = os.sys.argv[1:]
+    name_spece = parser(default_help(args))
 
     # 列出所有语言标签
     if name_spece.list_all_ltgt:
         return list_language_tag(name_spece)
     # 翻译给出的文本
     try:
-        return f_translator(name_spece)
+        return translator(name_spece)
     except public.errors.TargetLanguageNotSupported:
-        return F"不支持的语言:'{name_spece.tgt_lang}'\n你可以使用‘-l’选项查看语言支持列表"
+            print(F"不支持的语言:'{name_spece.lang_tag}'")
+            print("你可以使用‘-l’选项查看语言支持列表")
     finally:
         # debug mode
         if name_spece.debug:
