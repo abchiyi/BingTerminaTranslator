@@ -62,9 +62,10 @@ def translator(name_spece):
         return "待翻译文本为空!"
 
 def list_language_tag(name_spece):
+    # FIXME 转换翻译过于耗时
     all_l_tgt = setting.Config().tgt_lang
     tqdm_keys = tqdm.tqdm(all_l_tgt.keys())
-    base_language = name_spece.tgt_lang.strip()
+    base_language = name_spece.lang_tag.strip()
     temp = []
 
     for key in tqdm_keys:

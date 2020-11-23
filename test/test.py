@@ -21,6 +21,10 @@ class MainTest(unittest.TestCase):
 
         self.assertNotEqual(text, paste())
 
+    def test_list_option(self):
+        entrance(['zh-Hans', '-l'])
+
+
     def test_error_language_tag(self):
         entrance(['abc','hello'])
 
