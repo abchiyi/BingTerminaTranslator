@@ -7,33 +7,7 @@
 
 [文档-Document][4] | [下载发行版][1]
 
----
 
-## 如何安装发行版
-
-### ![Gitee](/media/SVG/windows.svg "Windwos") <font color='blue'>Windwos 安装配置</font>
-
-下载最新的Windows[发行版][1]，解压并右键执行“install.ps1”脚本安装
-
----
-
-### ![linux](/media/SVG/linux.svg "Linux") <font color='Yellow'>Linux安装配置</font>
-
-    prg=~/.bin_terminal_translator
-    git clone https://gitee.com/abchiyi/BinTerminaTranslator $prg;cd $prg
-    bash ./install/linux.sh
-
-### zsh
-
-    echo 'alias bin="~/.bin_terminal_translator/bin.sh"' >> ~/.zshrc
-    touch  ~/.zshrc
-
-### bashrc
-
-    echo 'alias bin="~/.bin_terminal_translator/bin.sh"' >> ~/.bashrc
-    touch  ~/.bashrc
-
----
 
 ## 如何使用
 
@@ -58,11 +32,6 @@
 
 ### 选项 -c --copy
 复制翻译后的文本到剪贴板
-
-### 选项 --script
-以当前语言建立一个快捷脚本
-
-    bin zh-Hans --script
 
 ### 选项 -d --debug
 故障排查模式，没啥用
@@ -97,4 +66,5 @@
 <!-- git -->
 [3]:https://git-scm.com/downloads
 <!-- Doc网站 -->
+<!-- TODO 待添加文档网站 -->
 [4]:https:......
