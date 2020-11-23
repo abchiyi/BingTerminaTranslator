@@ -46,6 +46,11 @@ def translator(name_spece):
         # 你无法获取英语翻译为英语的解释意思
         except public.errors.EqualTextLanguage:
                 print(F"文本'{reper_text}'已是'{lang_tag}'类型，无需翻译")
+
+        # 某些特殊情况下，获取详细信息可能引发错误，直接忽略
+        except KeyError:
+                pass
+
         else:
             if semantic:
                 return F"{str(text_obj)}\n{'-='*20}\n{semantic.text()}"
