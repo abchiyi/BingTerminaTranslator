@@ -1,6 +1,6 @@
 import unittest
 
-from bin import entrance
+from bing_translator import entrance
 from pyperclip import copy, paste
 from pathlib import Path
 import os
@@ -22,18 +22,19 @@ class Entrance(unittest.TestCase):
         # 清空剪贴板
         self.assertNotEqual(paste(), or_text)
 
-    def test_make_script(self):
-        """测试能否正常制作脚本"""
-        base_path = f'{os.getenv("BTT_HOME")}/scripts/'
-        tgt_lang = 'zh-Hans'
-        entrance([tgt_lang, "--script"])
+    #  TODO 暂时不支持
+    # def test_make_script(self):
+    #     """测试能否正常制作脚本"""
+    #     base_path = f'{os.getenv("BTT_HOME")}/scripts/'
+    #     tgt_lang = 'zh-Hans'
+    #     entrance([tgt_lang, "--script"])
 
-        if not Path(F'{base_path}{tgt_lang}.ps1').is_file():
-            self.fail('脚本未被创建')
+    #     if not Path(F'{base_path}{tgt_lang}.ps1').is_file():
+    #         self.fail('脚本未被创建')
 
-        # 删除测试脚本
-        for file in os.listdir(base_path):
-            os.remove(F'{base_path}{file}')
+    #     # 删除测试脚本
+    #     for file in os.listdir(base_path):
+    #         os.remove(F'{base_path}{file}')
 
 
 if __name__ == "__main__":

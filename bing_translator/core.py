@@ -81,7 +81,7 @@ def f_translator(name_spece):
         return "待翻译文本为空!"
 
 
-def all_tgt(name_spece):
+def list_language_tag(name_spece):
     all_l_tgt = setting.Config().tgt_lang
     tqdm_keys = tqdm.tqdm(all_l_tgt.keys())
     base_language = name_spece.tgt_lang.strip()
@@ -111,16 +111,12 @@ def entrance(args: list = None):
 
     # 列出所有语言标签
     if name_spece.list_all_ltgt:
-        return all_tgt(name_spece)
-
+        return list_language_tag(name_spece)
     # 翻译给出的文本
     try:
         return f_translator(name_spece)
     except public.errors.TargetLanguageNotSupported:
-        try:
-            return f_translator(name_spece)
-        except public.errors.TargetLanguageNotSupported:
-            return F"不支持的语言:‘{name_spece.tgt_lang}’\n你可以使用‘-l’选项查看语言支持列表"
+        return F"不支持的语言:'{name_spece.tgt_lang}'\n你可以使用‘-l’选项查看语言支持列表"
     finally:
         # debug mode
         if name_spece.debug:
