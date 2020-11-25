@@ -2,7 +2,6 @@ from bing_translation_for_python import core, public, setting
 from pyperclip import paste, copy
 
 import argparse
-import tqdm
 import os
 
 
@@ -30,6 +29,7 @@ def parser(args) -> argparse.Namespace:
 
     return a_p.parse_args(args)
 
+
 def translator(name_spece):
     lang_tag = name_spece.lang_tag.strip()
     # 分别从name_spece 和 paste中获取文本，name_space 优先
@@ -46,7 +46,7 @@ def translator(name_spece):
         # 例如在把英语翻译到英语这样的情况时它会出现
         # 你无法获取英语翻译为英语的解释意思
         except public.errors.EqualTextLanguage:
-                print(F"文本'{reper_text}'已是'{lang_tag}'类型，无需翻译")
+            print(F"文本'{reper_text}'已是'{lang_tag}'类型，无需翻译")
 
         else:
             if semantic:
@@ -58,33 +58,30 @@ def translator(name_spece):
             # copy选项仅翻译后的文本
             copy(text_obj.text())
 
-
     # 这出现在控制台和终端都没有获取到有效的文本时
     except public.errors.EmptyTextError:
         return "待翻译文本为空!"
 
+
 def list_language_tag(name_spece):
-    # FIXME 转换翻译过于耗时
-    all_l_tgt = setting.Config().tgt_lang
-    tqdm_keys = tqdm.tqdm(all_l_tgt.keys())
     base_language = name_spece.lang_tag.strip()
-    temp = []
+    lang_tag = setting.Config().tgt_lang
 
-    for key in tqdm_keys:
-        tqdm_keys.set_description(F'{key}>>>>>{base_language}')
-        i18_tgt = core.Translator(base_language).translator(
-            all_l_tgt[key]['text']
-        )
+    tags = list(lang_tag.keys())
+    # 将分行的文本一次性发送给服务器
+    texts = core.Translator(base_language).translator(
+        '\n'.join([lang_tag[tag]['text'] for tag in tags])
+    ).text().split('\n')
 
-        temp.append(F"language tgt:[{key}] {i18_tgt}\n")
+    return '\n'.join([F"{texts[n]}:{[tags[n]]}" for n in range(len(tags))])
 
-    return ''.join(temp)
 
 def default_help(argv):
     # 没有有效参数时,默认显示帮助信息
     if argv:
         return argv
     return ['-h']
+
 
 def entrance(args: list = None):
     """翻译入口"""
@@ -99,8 +96,8 @@ def entrance(args: list = None):
     try:
         return translator(name_spece)
     except public.errors.TargetLanguageNotSupported:
-            print(F"不支持的语言:'{name_spece.lang_tag}'")
-            print("你可以使用‘-l’选项查看语言支持列表")
+        print(F"不支持的语言:'{name_spece.lang_tag}'")
+        print("你可以使用‘-l’选项查看语言支持列表")
     finally:
         # debug mode
         if name_spece.debug:
