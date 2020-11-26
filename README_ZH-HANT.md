@@ -5,7 +5,7 @@
 該項目設計為內建內建在終端內的快速翻譯工具
 
 ## 翻譯實現依賴專案
-[Gitee bing-translation-for-python][1] | [Github bing-translation-for-python][2]
+__bing-translation-for-python__ [Gitee][1] | [Github][2]
 
 ## 安裝
 
