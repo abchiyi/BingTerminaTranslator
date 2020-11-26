@@ -12,17 +12,17 @@ def parser(args) -> argparse.Namespace:
     )
     # 位置参数 #
     # 语言类型
-    a_p.add_argument('lang_tag', help='Target lang_tag', default='zh-Hans')
+    a_p.add_argument('lang_tag', help='Target lang_tag')
     # 文本，接受多个参数
-    a_p.add_argument('text', nargs='*', default=None, help='some texts')
+    a_p.add_argument('text', nargs='*', default=None, help='text')
 
     # 可选参数 #
     # 复制输出内容
     a_p.add_argument('-c', '--copy', action='store_true',
-                     help='Copy to the clipboard')
+                     help='Write text to the clipboard')
     # 以当前指定语言模式列出所有语言标签
     a_p.add_argument('-l', '--list_all_ltgt', action='store_true',
-                     help='List all languages')
+                     help='List all supported languages')
     # de bug 模式
     a_p.add_argument('-d', '--debug', action='store_true',
                      help='DeBug Mode')
