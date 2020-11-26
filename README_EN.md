@@ -1,4 +1,4 @@
-# Bin Termina Translator
+# BingTerminaTranslator
 
 ## Introduction
 
@@ -8,11 +8,11 @@ The project is designed as a quick translation tool built into the terminal
 __bing-translation-for-python__ [Gitee][1] | [Github][2]
 
 ## The project address
-__BinTranslator__ [Gitee][3] | [Github][4]
+__bing-termina-translator__ [Gitee][3] | [Github][4]
 
 ## Installation
 
-    $ pip install bing_translator
+    $ pip install bing-terminal-translator
 
 ## How to use it
 
@@ -24,7 +24,7 @@ Type 'bing' directly to see the help information. Here's an example of how to us
 ## Option -l -- list_all_lgtg
 Enter the language code of the language you are using, such as 'en' as the first parameter, with the '-l' switch attached at the end, and the program will display all the supporting languages and their abbreviations in your language
 
-    $ bin en -l
+    $ bing en -l
 
 ## Option -h --help
 

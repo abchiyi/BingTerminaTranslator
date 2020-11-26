@@ -1,4 +1,4 @@
-# BinTranslator
+# BingTerminaTranslator
 
 ## 介绍
 
@@ -8,11 +8,11 @@
 __bing-translation-for-python__ [Gitee][1] | [Github][2]
 
 ## 项目地址
-__BinTranslator__ [Gitee][3] | [Github][4]
+__bing-termina-translator__ [Gitee][3] | [Github][4]
 
 ## 安装
 
-    $ pip install bing_translator
+    $ pip install bing-terminal-translator
 
 ## 如何使用
 

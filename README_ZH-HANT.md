@@ -1,4 +1,4 @@
-# BinTerminaTranslator
+# BingTerminaTranslator
 
 ## 介紹
 
@@ -8,11 +8,11 @@
 __bing-translation-for-python__ [Gitee][1] | [Github][2]
 
 ## 本專案地址
-__BinTranslator__ [Gitee][3] | [Github][4]
+__bing-termina-translator__ [Gitee][3] | [Github][4]
 
 ## 安裝
 
-    $ pip install bing_translator
+    $ pip install bing-termina-translator
 
 ## 如何使用
 
@@ -24,7 +24,7 @@ __BinTranslator__ [Gitee][3] | [Github][4]
 ### 選項 -l --list_all_lgtg
 輸入你所使用的語言的語言的語言碼，例如'en'作為第一個參數，結尾附上'-l'開關,程式將以你的語言來展示全部支援的語言
 
-    $ bin en -l
+    $ bing en -l
 
 ### 選項 -h --help
 
