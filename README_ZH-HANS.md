@@ -9,22 +9,19 @@
 
 ## 安装
 
-    pip install bing_translator
+    $ pip install bing_translator
 
 ## 如何使用
 
 安装配置完毕后，命令行中输入即可执行翻译到指定的语言。
 直接键入'bing'以查看帮助信息。下面是一个使用示例
 
-    bing zh-Hans hello
+    $ bing zh-Hans hello
 
 ### 选项 -l --list_all_lgtg
-输入你所使用的语言的语言的语言码，例如'en'作为第一个参数，结尾附上'-l'开关
-程序将以你的语言来展示指出的语言
+输入你所使用的语言的语言的语言码，例如'en'作为第一个参数，结尾附上'-l'开关，程序将以你的语言来展示全部支持语言及其缩写
 
-    bin en -l
-
-该选项用于展示所有支持的语言及其语言码用法如下,该选项支持i8n,将自动转换码表语言至指定语言。但目前不支持存储，每次调用时需要等候转换
+    $ bin en -l
 
 ### 选项 -h --help
 
@@ -43,4 +40,4 @@
 [1]:https://gitee.com/abchiyi/bing_translation_for_python
 
 <!-- Github -->
-[1]:https:......
+[2]:https:......
