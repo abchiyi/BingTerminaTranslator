@@ -36,26 +36,22 @@ def translator(name_spece):
     reper_text = ' '.join(name_spece.text) or paste()
 
     try:
-        # 文本主体
         text_obj = core.Translator(lang_tag).translator(reper_text)
-        try:
-            # 如果文本是一个单词就能够获取到它的详细释义
-            semantic = text_obj.semantic()
 
-        except public.errors.EqualTextLanguage:
-            return text_obj.text()
-
-        else:
-            if semantic:
-                return F"{str(text_obj)}\n{'-='*20}\n{semantic.text()}"
-
-        return text_obj.text()
-
+        # copy选项仅复制翻译后的文本
         if name_spece.copy:
-            # copy选项仅翻译后的文本
             copy(text_obj.text())
 
-    # 这出现在控制台和终端都没有获取到有效的文本时
+        # 如果文本是一个单词就能够获取到它的详细释义
+        semantic = text_obj.semantic()
+        # 单词释义无效,返回文本
+        if semantic:
+            return F"{str(text_obj)}\n{'-='*20}\n{semantic.text()}"
+        return text_obj.text()
+
+    except public.errors.EqualTextLanguage:
+        return reper_text
+
     except public.errors.EmptyTextError:
         return "待翻译文本为空!"
 

@@ -14,15 +14,25 @@ class MainTest(unittest.TestCase):
         copy('')
 
     def test_copy_option(self):
-        """测试是否能正确读写剪贴板"""
-
+        """测试写剪贴板"""
         repr_text = 'hello world'
+
+        # 复制到剪贴版
+        entrance(['en', repr_text, '-c'])
+
+        self.assertEqual(repr_text, paste())
+
+    def test_read_from_the_clipboard(self):
+        """测试读剪贴板"""
+        repr_text = 'hello world'
+
         # 向剪贴板写入待读取文本
         copy(repr_text)
-        # 参数中不给出文本参数，以便从剪贴板读取
-        text = entrance(['zh-Hans', '-c', '-d'])
 
-        self.assertNotEqual(text, paste())
+        # 从剪贴板读取文本
+        entrance(['en', '-c'])
+
+        self.assertEqual(repr_text, paste())
 
     def test_list_option(self):
         lang_tag = setting.Config().tgt_lang
