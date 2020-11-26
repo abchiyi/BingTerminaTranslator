@@ -24,7 +24,7 @@ class MainTest(unittest.TestCase):
 
     def test_read_from_the_clipboard(self):
         """测试读剪贴板"""
-        repr_text = 'hello world'
+        repr_text = 'hello'
 
         # 向剪贴板写入待读取文本
         copy(repr_text)
