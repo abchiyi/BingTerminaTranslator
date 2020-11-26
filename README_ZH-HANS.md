@@ -1,4 +1,4 @@
-# BinTerminaTranslator
+# BinTranslator
 
 ## 介绍
 
@@ -6,6 +6,9 @@
 
 ## 翻译实现依赖项目
 __bing-translation-for-python__ [Gitee][1] | [Github][2]
+
+## 项目地址
+__BinTranslator__ [Gitee][3] | [Github][4]
 
 ## 安装
 
@@ -41,3 +44,10 @@ __bing-translation-for-python__ [Gitee][1] | [Github][2]
 
 <!-- Github -->
 [2]:https:......
+
+<!-- TODO bing-translation 项目地址 -->
+<!-- Gitee -->
+[3]:https://gitee.com/abchiyi/bing-translator
+
+<!-- Github -->
+[4]:https:......

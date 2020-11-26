@@ -7,6 +7,9 @@
 ## 翻譯實現依賴專案
 __bing-translation-for-python__ [Gitee][1] | [Github][2]
 
+## 本專案地址
+__BinTranslator__ [Gitee][3] | [Github][4]
+
 ## 安裝
 
     $ pip install bing_translator
@@ -41,3 +44,11 @@ __bing-translation-for-python__ [Gitee][1] | [Github][2]
 
 <!-- Github -->
 [2]:https:......
+
+
+<!-- TODO bing-translation 项目地址 -->
+<!-- Gitee -->
+[3]:https://gitee.com/abchiyi/bing-translator
+
+<!-- Github -->
+[4]:https:......

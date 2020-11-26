@@ -7,6 +7,9 @@ The project is designed as a quick translation tool built into the terminal
 ## Translation implementations depend on the project
 __bing-translation-for-python__ [Gitee][1] | [Github][2]
 
+## The project address
+__BinTranslator__ [Gitee][3] | [Github][4]
+
 ## Installation
 
     $ pip install bing_translator
@@ -41,3 +44,11 @@ Troubleshooting mode, it's no use
 
 <!-- Github -->
 [2]:https:......
+
+
+<!-- TODO bing-translation 项目地址 -->
+<!-- Gitee -->
+[3]:https://gitee.com/abchiyi/bing-translator
+
+<!-- Github -->
+[4]:https:......
