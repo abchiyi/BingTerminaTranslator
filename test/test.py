@@ -33,9 +33,6 @@ class MainTest(unittest.TestCase):
             text = text.split(':')[0]
             self.assertEqual(lang_tag[tag]['text'], text)
 
-    def test_error_language_tag(self):
-        entrance(['abc', 'hello'])
-
     #  TODO 暂时不支持
     # def test_make_script(self):
     #     """测试能否正常制作脚本"""

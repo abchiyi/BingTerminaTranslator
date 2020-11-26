@@ -42,11 +42,8 @@ def translator(name_spece):
             # 如果文本是一个单词就能够获取到它的详细释义
             semantic = text_obj.semantic()
 
-        # 需要在这里注意"EqualTextLanguage"错误
-        # 例如在把英语翻译到英语这样的情况时它会出现
-        # 你无法获取英语翻译为英语的解释意思
         except public.errors.EqualTextLanguage:
-            print(F"文本'{reper_text}'已是'{lang_tag}'类型，无需翻译")
+            return text_obj.text()
 
         else:
             if semantic:
