@@ -1,4 +1,4 @@
-from bing_translation_for_python import core, public, setting
+from bing_translation_for_python import Translator, public, setting
 from pyperclip import paste, copy
 
 import argparse
@@ -36,7 +36,7 @@ def translator(name_spece):
     reper_text = ' '.join(name_spece.text) or paste()
 
     try:
-        text_obj = core.Translator(lang_tag).translator(reper_text)
+        text_obj = Translator(lang_tag).translator(reper_text)
 
         # copy选项仅复制翻译后的文本
         if name_spece.copy:
@@ -62,7 +62,7 @@ def list_language_tag(name_spece):
 
     tags = list(lang_tag.keys())
     # 将分行的文本一次性发送给服务器
-    texts = core.Translator(base_language).translator(
+    texts = Translator(base_language).translator(
         '\n'.join([lang_tag[tag]['text'] for tag in tags])
     ).text().split('\n')
 
